@@ -33,10 +33,67 @@
   .toggle-btn:hover { opacity:0.85; }
   .toggle-btn.active { background:#0F2638; color:#CCCB3F; }
   .reveal-btn:hover { opacity:0.85; }
+
+  /* ── Custom deck navigation: side arrows + dot pagination ─────────── */
+  .deck-nav-arrow {
+    position:fixed;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:2147483000;
+    width:64px;
+    height:64px;
+    border-radius:999px;
+    border:2px solid rgba(255,255,255,0.35);
+    background:rgba(6,15,26,0.4);
+    color:#FFFFFF;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:border-color 160ms ease, background 160ms ease, opacity 160ms ease, transform 160ms ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .deck-nav-arrow:hover { border-color:#CCCB3F; background:#CCCB3F; color:#0F2638; }
+  .deck-nav-arrow:active { transform:translateY(-50%) scale(0.92); }
+  .deck-nav-arrow.prev { left:28px; }
+  .deck-nav-arrow.next { right:28px; }
+  .deck-nav-arrow[disabled] { opacity:0.25; pointer-events:none; }
+  .deck-nav-arrow svg { width:26px; height:26px; display:block; }
+
+  .deck-nav-dots {
+    position:fixed;
+    left:50%;
+    bottom:26px;
+    transform:translateX(-50%);
+    z-index:2147483000;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 18px;
+    border-radius:999px;
+    background:rgba(6,15,26,0.45);
+  }
+  .deck-nav-dots .dot {
+    width:10px;
+    height:10px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.35);
+    cursor:pointer;
+    transition:background 160ms ease, width 160ms ease;
+  }
+  .deck-nav-dots .dot:hover { background:rgba(255,255,255,0.6); }
+  .deck-nav-dots .dot.active { width:28px; background:#CCCB3F; }
+
+  @media (max-width:640px) {
+    .deck-nav-arrow { width:48px; height:48px; }
+    .deck-nav-arrow.prev { left:12px; }
+    .deck-nav-arrow.next { right:12px; }
+    .deck-nav-arrow svg { width:20px; height:20px; }
+  }
 </style>
 </head>
 <body>
-<deck-stage width="1920" height="1080" style="background:#060F1A !important; background-color:#060F1A !important;">
+<deck-stage no-rail width="1920" height="1080" style="background:#060F1A !important; background-color:#060F1A !important;">
 
   <!-- ============ 14 CTA (moved to first) ============ -->
   <section data-label="14 CTA" data-speaker-notes="Fechamento: retomar o plano escolhido e agendar a primeira consulta agora." style="background:#060F1A; font-family:Poppins, sans-serif;">
@@ -216,26 +273,26 @@
 
   <!-- ============ 09 ESTUDO ============ -->
   <section data-label="09 Estudo adesão" data-speaker-notes="Estudo clínico: treino online guiado vs autodirigido por 10 semanas. 8 em 10 continuam com acompanhamento; só 5 em 10 sozinhos." style="background:#060F1A; font-family:Poppins, sans-serif;">
-    <div style="position:absolute; inset:36px; background:#CCCB3F; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; padding:110px 96px 70px 96px; box-sizing:border-box;">
+    <div style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; padding:110px 96px 70px 96px; box-sizing:border-box;">
       <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada.svg'); background-repeat:repeat-x; background-size:96px 96px;"></div>
-      <div style="font-weight:700; font-size:24px; letter-spacing:5px; color:#0F2638;">A CIÊNCIA CONFIRMA</div>
-      <h2 style="margin:18px 0 0 0; font-weight:800; font-size:56px; color:#0F2638;">Sozinho, quase metade abandona</h2>
-      <p style="margin:16px 0 0 0; font-size:28px; font-weight:400; color:#0F2638; max-width:1200px;">Estudo clínico comparou treino online <strong>guiado</strong> vs treino totalmente <strong>autodirigido</strong>, por 10 semanas.</p>
+      <div style="font-weight:700; font-size:24px; letter-spacing:5px; color:#CCCB3F;">A CIÊNCIA CONFIRMA</div>
+      <h2 style="margin:18px 0 0 0; font-weight:800; font-size:56px; color:#FFFFFF;">Sozinho, quase metade abandona</h2>
+      <p style="margin:16px 0 0 0; font-size:28px; font-weight:400; color:#FFFFFF; max-width:1200px;">Estudo clínico comparou treino online <strong style="color:#CCCB3F;">guiado</strong> vs treino totalmente <strong style="color:#CCCB3F;">autodirigido</strong>, por 10 semanas.</p>
       <div style="display:flex; gap:64px; align-items:flex-end; flex:1; margin-top:48px; max-width:1100px;">
         <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
-          <div style="font-weight:900; font-size:76px; color:#0F2638;">81%</div>
-          <div style="height:220px; background:#0F2638; display:flex; align-items:flex-end;"></div>
-          <div style="font-weight:700; font-size:28px; color:#0F2638;">Com acompanhamento</div>
-          <div style="font-weight:400; font-size:24px; color:#0F2638; opacity:0.75;">8 em cada 10 continuam</div>
+          <div style="font-weight:900; font-size:76px; color:#FFFFFF;">81%</div>
+          <div style="height:220px; background:#CCCB3F; display:flex; align-items:flex-end;"></div>
+          <div style="font-weight:700; font-size:28px; color:#FFFFFF;">Com acompanhamento</div>
+          <div style="font-weight:400; font-size:24px; color:rgba(255,255,255,0.85);">8 em cada 10 continuam</div>
         </div>
         <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
-          <div style="font-weight:900; font-size:76px; color:#0F2638; opacity:0.55;">52%</div>
-          <div style="height:132px; background:#0F2638; opacity:0.35;"></div>
-          <div style="font-weight:700; font-size:28px; color:#0F2638;">Sozinho</div>
-          <div style="font-weight:400; font-size:24px; color:#0F2638; opacity:0.75;">Só 5 em cada 10 continuam</div>
+          <div style="font-weight:900; font-size:76px; color:rgba(255,255,255,0.75);">52%</div>
+          <div style="height:132px; background:rgba(204,204,59,0.35);"></div>
+          <div style="font-weight:700; font-size:28px; color:#FFFFFF;">Sozinho</div>
+          <div style="font-weight:400; font-size:24px; color:rgba(255,255,255,0.75);">Só 5 em cada 10 continuam</div>
         </div>
       </div>
-      <p style="margin:36px 0 0 0; font-family:Inter, sans-serif; font-size:24px; color:#0F2638; opacity:0.65;">Fonte: Gavanda et al., Journal of Strength and Conditioning Research, 2025.</p>
+      <p style="margin:36px 0 0 0; font-family:Inter, sans-serif; font-size:24px; color:rgba(255,255,255,0.65);">Fonte: Gavanda et al., Journal of Strength and Conditioning Research, 2025.</p>
     </div>
   </section>
 
@@ -445,6 +502,60 @@
   function revealPlan() { budgetState.revealed = true; updateBudgetUI(); }
 
   updateBudgetUI();
+</script>
+
+<!-- ── Custom deck navigation: side arrows + dot pagination ─────────── -->
+<button class="deck-nav-arrow prev" type="button" aria-label="Slide anterior">
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
+</button>
+<button class="deck-nav-arrow next" type="button" aria-label="Próximo slide">
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+</button>
+<div class="deck-nav-dots" role="tablist" aria-label="Navegação de slides"></div>
+
+<script>
+  (function () {
+    var deck = document.querySelector('deck-stage');
+    var prevBtn = document.querySelector('.deck-nav-arrow.prev');
+    var nextBtn = document.querySelector('.deck-nav-arrow.next');
+    var dotsWrap = document.querySelector('.deck-nav-dots');
+    if (!deck || !prevBtn || !nextBtn || !dotsWrap) return;
+
+    prevBtn.addEventListener('click', function () { deck.prev(); });
+    nextBtn.addEventListener('click', function () { deck.next(); });
+
+    function buildDots(total) {
+      dotsWrap.innerHTML = '';
+      for (var i = 0; i < total; i++) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'dot';
+        dot.setAttribute('aria-label', 'Ir para o slide ' + (i + 1));
+        dot.dataset.index = String(i);
+        dot.addEventListener('click', function (e) {
+          deck.goTo(parseInt(e.currentTarget.dataset.index, 10));
+        });
+        dotsWrap.appendChild(dot);
+      }
+    }
+
+    function sync(index, total) {
+      if (dotsWrap.children.length !== total) buildDots(total);
+      var dots = dotsWrap.children;
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].classList.toggle('active', i === index);
+      }
+      prevBtn.disabled = index <= 0;
+      nextBtn.disabled = index >= total - 1;
+    }
+
+    deck.addEventListener('slidechange', function (e) {
+      sync(e.detail.index, e.detail.total);
+    });
+
+    // Initial paint (in case slidechange already fired before this ran).
+    sync(deck.index || 0, deck.length || 1);
+  })();
 </script>
 </body>
 </html>
