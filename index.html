@@ -521,6 +521,16 @@
     var dotsWrap = document.querySelector('.deck-nav-dots');
     if (!deck || !prevBtn || !nextBtn || !dotsWrap) return;
 
+    // Hide deck-stage's built-in overlay pill (prev/next/count/Reset) — the
+    // custom arrows + dots below replace it. It lives in the shadow root.
+    function hideBuiltinOverlay() {
+      try {
+        var ov = deck.shadowRoot && deck.shadowRoot.querySelector('.overlay');
+        if (ov) ov.style.display = 'none';
+      } catch (e) {}
+    }
+    hideBuiltinOverlay();
+
     prevBtn.addEventListener('click', function () { deck.prev(); });
     nextBtn.addEventListener('click', function () { deck.next(); });
 
