@@ -19,6 +19,32 @@
   *, *::before, *::after { forced-color-adjust: none !important; }
   deck-stage:not(:defined) { visibility:hidden; }
 
+  /* Crossfade + subtle rise/scale between slides. The slides are light-DOM
+     <section> children of <deck-stage>, only slotted into its shadow root —
+     so we can add transition/transform here without touching that shared
+     component file. Its own ::slotted() rules still own the opacity/
+     visibility VALUES (driven by [data-deck-active]); we only add the
+     transition timing + a transform, which those rules never set, so there's
+     no cascade conflict. The visibility transition is delayed on the way out
+     so the outgoing slide fades out instead of vanishing instantly, and
+     un-delayed on the way in so the incoming slide is visible immediately
+     while it fades/rises up. */
+  deck-stage > section {
+    transition: opacity 480ms cubic-bezier(.4,0,.2,1),
+                transform 480ms cubic-bezier(.4,0,.2,1),
+                visibility 0s linear 480ms;
+    transform: translateY(22px) scale(0.98);
+  }
+  deck-stage > section[data-deck-active] {
+    transform: translateY(0) scale(1);
+    transition: opacity 480ms cubic-bezier(.4,0,.2,1),
+                transform 480ms cubic-bezier(.4,0,.2,1),
+                visibility 0s linear 0s;
+  }
+  @media (prefers-reduced-motion:reduce) {
+    deck-stage > section { transition:none; transform:none; }
+  }
+
   .toggle-btn { 
     padding:22px 0;
     font-size:28px;
@@ -93,6 +119,124 @@
     .deck-nav-arrow.next { right:12px; }
     .deck-nav-arrow svg { width:20px; height:20px; }
   }
+
+  .passo-card { display:none; opacity:0; }
+  .passo-card.visible {
+    display:flex;
+    animation:passo-in 620ms cubic-bezier(.22,1.28,.36,1) both;
+  }
+  #passo-4.visible { animation-name:passo-in-rotated; }
+  @keyframes passo-in {
+    0% { opacity:0; transform:translateY(28px) scale(0.94); }
+    60% { opacity:1; }
+    100% { opacity:1; transform:translateY(0) scale(1); }
+  }
+  @keyframes passo-in-rotated {
+    0% { opacity:0; transform:translateY(28px) scale(0.94) rotate(-1.5deg); }
+    60% { opacity:1; }
+    100% { opacity:1; transform:translateY(0) scale(1) rotate(-1.5deg); }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    .passo-card.visible { animation:none; opacity:1; }
+  }
+
+  /* Fixed slot for the step-1/2/3 carousel: only one card visible at a time,
+     the leaving one slides out left while the entering one slides in from
+     the right, in the exact same slot so the arrow + persona photo never
+     move or resize. */
+  .passo-step-card {
+    display:none;
+    position:absolute;
+    inset:0;
+    flex-direction:column;
+    gap:22px;
+    padding:40px 32px;
+    box-sizing:border-box;
+    transform:translateX(100%);
+    transition:transform 420ms cubic-bezier(.4,0,.2,1);
+  }
+  .passo-step-card.visible,
+  .passo-step-card.leaving,
+  .passo-step-card.entering { display:flex; }
+  .passo-step-card.visible { transform:translateX(0); }
+  .passo-step-card.leaving { transform:translateX(-100%); }
+  .passo-step-card.entering { transform:translateX(100%); }
+  @media (prefers-reduced-motion:reduce) {
+    .passo-step-card { transition:none; }
+  }
+
+  #passos-gridview { display:none; }
+  #passos-gridview.visible { display:grid; }
+  #passos-stepview.leaving { opacity:0; }
+  #passos-stepview {
+    opacity:1;
+    transition:opacity 380ms ease;
+  }
+  @media (prefers-reduced-motion:reduce) {
+    #passos-stepview { transition:none; }
+  }
+
+  #passo-arrow {
+    box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    animation:passo-arrow-pulse 2.4s ease-in-out infinite;
+  }
+  #passo-arrow svg { transition:transform 160ms ease; }
+  #passo-arrow:hover { background:#FFFFFF; transform:scale(1.1); animation-play-state:paused; }
+  #passo-arrow:hover svg { transform:translateX(2px); }
+  #passo-arrow:active { transform:scale(0.94); }
+  @keyframes passo-arrow-pulse {
+    0%, 100% { box-shadow:0 8px 20px rgba(0,0,0,0.3), 0 0 0 0 rgba(204,203,63,0.55); }
+    50% { box-shadow:0 8px 20px rgba(0,0,0,0.3), 0 0 0 12px rgba(204,203,63,0); }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    #passo-arrow { animation:none; }
+  }
+
+  #passo-persona-img {
+    position:absolute;
+    left:38%;
+    bottom:-80px;
+    z-index:1;
+    max-height:calc(100% + 140px);
+    max-width:120%;
+    width:auto;
+    height:auto;
+    object-fit:contain;
+    transition:opacity 320ms ease, transform 320ms ease;
+    transform:translateX(-38%) translateY(0);
+    opacity:1;
+  }
+  #passo-persona-img.persona-hidden {
+    opacity:0;
+    transform:translateX(-38%) translateY(18px);
+  }
+
+  #passo-persona-tag {
+    position:absolute;
+    left:108px;
+    bottom:88px;
+    z-index:2;
+    background:#CCCB3F;
+    border-radius:20px;
+    padding:18px 28px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.25);
+    transition:opacity 320ms ease, transform 320ms ease;
+    transform:translateY(0);
+    opacity:1;
+  }
+  #passo-persona-tag.persona-hidden {
+    opacity:0;
+    transform:translateY(18px);
+  }
+  #passo-persona-tag-name { font-weight:800; font-size:26px; color:#0F2638; line-height:1.2; white-space:nowrap; }
+  #passo-persona-tag-role { font-weight:600; font-size:19px; color:#0F2638; opacity:0.8; line-height:1.2; white-space:nowrap; }
+
+  @media (prefers-reduced-motion:reduce) {
+    #passo-persona-img, #passo-persona-tag { transition:none; }
+  }
 </style>
 </head>
 <body>
@@ -112,31 +256,70 @@
   <!-- CAPA slide removed -->
 
   <!-- ============ 02 PASSOS ============ -->
-  <section data-label="02 4 passos" data-speaker-notes="Explicar a ordem: médico garante segurança, nutri monta o plano real, personal alinha o treino, e a fase de acompanhamento sustenta o resultado." style="background:#060F1A; font-family:Poppins, sans-serif;">
+  <section id="slide-passos" data-label="02 4 passos" data-speaker-notes="Explicar a ordem: médico garante segurança, nutri monta o plano real, personal alinha o treino, e a fase de acompanhamento sustenta o resultado. Clique na seta para revelar cada passo." style="background:#060F1A; font-family:Poppins, sans-serif;">
     <div style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; padding:110px 96px 80px 96px; box-sizing:border-box;">
       <div style="position:absolute; top:0; left:0; right:0; height:48px; background:#0F2638; background-image:url('assets/xadrez-bandeirada-lime.svg'); background-repeat:repeat-x; background-size:96px 96px;"></div>
+      <div style="position:absolute; left:0; right:0; bottom:0; height:56px; background:#CCCB3F; z-index:0;"></div>
       <div style="font-weight:700; font-size:24px; letter-spacing:5px; color:#CCCB3F;">O CAMINHO</div>
-      <h2 style="margin:18px 0 0 0; font-weight:800; font-size:56px; color:#FFFFFF;">Seu tratamento em 4 passos</h2>
-      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:28px; margin-top:56px; flex:1;">
-        <div style="background:#12314A; padding:40px 32px; display:flex; flex-direction:column; gap:18px;">
-          <div style="width:56px; height:56px; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:30px; display:flex; align-items:center; justify-content:center;">1</div>
-          <div style="font-weight:800; font-size:30px; color:#CCCB3F;">Médico</div>
-          <p style="margin:0; font-size:24px; line-height:1.45; color:#FFFFFF; font-weight:400;">Garantia de um tratamento seguro. Verifica exames, histórico e necessidade de medicações.</p>
+      <h2 style="margin:18px 0 0 0; font-weight:800; font-size:76px; color:#FFFFFF;">Seu tratamento em 4 passos</h2>
+      <div id="passos-area" style="position:relative; margin-top:56px; flex:1; min-height:0; z-index:1;">
+
+        <!-- Steps 1-3: fixed-size slot (one card at a time, slides out/in) + arrow
+             + persona photo. Slot and persona zone stay the same size/position
+             throughout — only the card content inside the slot changes. -->
+        <div id="passos-stepview" style="display:flex; align-items:stretch; gap:12px; height:100%;">
+          <div id="passo-slot" style="position:relative; flex:0 0 440px; margin-left:180px; overflow:hidden;">
+            <div id="passo-1" class="passo-step-card visible" style="background:#12314A;">
+              <div style="width:72px; height:72px; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:42px; display:flex; align-items:center; justify-content:center;">1</div>
+              <div style="font-weight:800; font-size:42px; color:#CCCB3F;">Médico</div>
+              <p style="margin:0; font-size:32px; line-height:1.4; color:#FFFFFF; font-weight:400;">Garantia de um tratamento seguro. Verifica exames, histórico e necessidade de medicações.</p>
+            </div>
+            <div id="passo-2" class="passo-step-card" style="background:#12314A;">
+              <div style="width:72px; height:72px; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:42px; display:flex; align-items:center; justify-content:center;">2</div>
+              <div style="font-weight:800; font-size:42px; color:#CCCB3F;">Nutricionista</div>
+              <p style="margin:0; font-size:32px; line-height:1.4; color:#FFFFFF; font-weight:400;">Sem dieta genérica. Tudo é pensado para encaixar na sua rotina.</p>
+            </div>
+            <div id="passo-3" class="passo-step-card" style="background:#12314A;">
+              <div style="width:72px; height:72px; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:42px; display:flex; align-items:center; justify-content:center;">3</div>
+              <div style="font-weight:800; font-size:42px; color:#CCCB3F;">Personal</div>
+              <p style="margin:0; font-size:32px; line-height:1.4; color:#FFFFFF; font-weight:400;">Alinhamento do treino de acordo com seu objetivo e condicionamento atual.</p>
+            </div>
+          </div>
+          <button id="passo-arrow" type="button" aria-label="Mostrar próximo passo" onclick="revealNextPasso()" style="flex:0 0 72px; align-self:center; margin-left:48px; width:72px; height:72px; border-radius:999px; border:none; background:#CCCB3F; color:#0F2638; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform 160ms ease, background 160ms ease; -webkit-tap-highlight-color:transparent;">
+            <svg viewBox="0 0 16 16" width="30" height="30" fill="none" stroke="#0F2638" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2.5l6 5.5-6 5.5"/></svg>
+          </button>
+          <div id="passo-persona" style="flex:1; min-width:0; position:relative; overflow:visible;">
+            <img id="passo-persona-img" src="assets/medico.webp" alt="Médico">
+            <div id="passo-persona-tag">
+              <span id="passo-persona-tag-name">Dr. Guilherme Gazzi</span>
+              <span id="passo-persona-tag-role">Médico · UFCSPA</span>
+            </div>
+          </div>
         </div>
-        <div style="background:#12314A; padding:40px 32px; display:flex; flex-direction:column; gap:18px;">
-          <div style="width:56px; height:56px; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:30px; display:flex; align-items:center; justify-content:center;">2</div>
-          <div style="font-weight:800; font-size:30px; color:#CCCB3F;">Nutricionista</div>
-          <p style="margin:0; font-size:24px; line-height:1.45; color:#FFFFFF; font-weight:400;">Sem dieta genérica. Tudo é pensado para encaixar na sua rotina.</p>
-        </div>
-        <div style="background:#12314A; padding:40px 32px; display:flex; flex-direction:column; gap:18px;">
-          <div style="width:56px; height:56px; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:30px; display:flex; align-items:center; justify-content:center;">3</div>
-          <div style="font-weight:800; font-size:30px; color:#CCCB3F;">Personal</div>
-          <p style="margin:0; font-size:24px; line-height:1.45; color:#FFFFFF; font-weight:400;">Alinhamento do treino de acordo com seu objetivo e condicionamento atual.</p>
-        </div>
-        <div style="background:#CCCB3F; padding:40px 32px; display:flex; flex-direction:column; gap:18px; transform:rotate(-1.5deg);">
-          <div style="width:56px; height:56px; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:30px; display:flex; align-items:center; justify-content:center;">4</div>
-          <div style="font-weight:800; font-size:30px; color:#0F2638;">Resultado sustentável</div>
-          <p style="margin:0; font-size:24px; line-height:1.45; color:#0F2638; font-weight:500;">Acompanhamento e ajustes quando necessário. Sem efeito sanfona. Sem começar e parar.</p>
+
+        <!-- Finale: classic full-width 4-up grid, no persona photo. Revealed
+             after step 3 with a staggered carousel-in of all four cards. -->
+        <div id="passos-gridview" style="grid-template-columns:repeat(4, 1fr); gap:28px; height:100%;">
+          <div class="passo-card" style="background:#12314A; padding:40px 32px; flex-direction:column; gap:22px;">
+            <div style="width:72px; height:72px; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:42px; display:flex; align-items:center; justify-content:center;">1</div>
+            <div style="font-weight:800; font-size:42px; color:#CCCB3F;">Médico</div>
+            <p style="margin:0; font-size:32px; line-height:1.4; color:#FFFFFF; font-weight:400;">Garantia de um tratamento seguro. Verifica exames, histórico e necessidade de medicações.</p>
+          </div>
+          <div class="passo-card" style="background:#12314A; padding:40px 32px; flex-direction:column; gap:22px;">
+            <div style="width:72px; height:72px; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:42px; display:flex; align-items:center; justify-content:center;">2</div>
+            <div style="font-weight:800; font-size:42px; color:#CCCB3F;">Nutricionista</div>
+            <p style="margin:0; font-size:32px; line-height:1.4; color:#FFFFFF; font-weight:400;">Sem dieta genérica. Tudo é pensado para encaixar na sua rotina.</p>
+          </div>
+          <div class="passo-card" style="background:#12314A; padding:40px 32px; flex-direction:column; gap:22px;">
+            <div style="width:72px; height:72px; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:42px; display:flex; align-items:center; justify-content:center;">3</div>
+            <div style="font-weight:800; font-size:42px; color:#CCCB3F;">Personal</div>
+            <p style="margin:0; font-size:32px; line-height:1.4; color:#FFFFFF; font-weight:400;">Alinhamento do treino de acordo com seu objetivo e condicionamento atual.</p>
+          </div>
+          <div id="passo-4" class="passo-card" style="background:#CCCB3F; padding:40px 32px; flex-direction:column; gap:22px;">
+            <div style="width:72px; height:72px; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:42px; display:flex; align-items:center; justify-content:center;">4</div>
+            <div style="font-weight:800; font-size:42px; color:#0F2638;">Resultado sustentável</div>
+            <p style="margin:0; font-size:32px; line-height:1.4; color:#0F2638; font-weight:500;">Acompanhamento e ajustes quando necessário. Sem efeito sanfona. Sem começar e parar.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -568,6 +751,134 @@
 
     // Initial paint (in case slidechange already fired before this ran).
     sync(deck.index || 0, deck.length || 1);
+  })();
+</script>
+
+<script>
+  (function () {
+    var currentStep = 1;
+    var STEP_TRANSITION_MS = 420;
+    var PASSO_PERSONAS = {
+      1: { src: 'assets/medico.webp', alt: 'Médico', name: 'Dr. Guilherme Gazzi', role: 'Médico · UFCSPA' },
+      2: { src: 'assets/nutri.webp', alt: 'Nutricionista', name: 'Maria Eduarda', role: 'Nutricionista' },
+      3: { src: 'assets/samuka.webp', alt: 'Personal', name: 'Samuel', role: 'Treinador' }
+    };
+
+    function setPersona(step, animate) {
+      var img = document.getElementById('passo-persona-img');
+      var tag = document.getElementById('passo-persona-tag');
+      var tagName = document.getElementById('passo-persona-tag-name');
+      var tagRole = document.getElementById('passo-persona-tag-role');
+      if (!img) return;
+      var info = PASSO_PERSONAS[step];
+      if (!info) return;
+      if (!animate) {
+        img.src = info.src;
+        img.alt = info.alt;
+        img.classList.remove('persona-hidden');
+        if (tagName) tagName.textContent = info.name;
+        if (tagRole) tagRole.textContent = info.role;
+        if (tag) tag.classList.remove('persona-hidden');
+        return;
+      }
+      img.classList.add('persona-hidden');
+      if (tag) tag.classList.add('persona-hidden');
+      setTimeout(function () {
+        img.src = info.src;
+        img.alt = info.alt;
+        img.classList.remove('persona-hidden');
+        if (tagName) tagName.textContent = info.name;
+        if (tagRole) tagRole.textContent = info.role;
+        if (tag) tag.classList.remove('persona-hidden');
+      }, 300);
+    }
+
+    // Steps 1-3: the leaving card slides out to the left while the next one
+    // slides in from the right, inside the same fixed slot — arrow and
+    // persona photo never move.
+    function switchStepCard(fromStep, toStep) {
+      var fromCard = document.getElementById('passo-' + fromStep);
+      var toCard = document.getElementById('passo-' + toStep);
+      if (toCard) {
+        // Place it off-screen right (display:flex, translateX(100%)) and
+        // force a reflow so the browser registers that starting position
+        // before we flip to .visible — otherwise the very first transition
+        // (display:none -> flex) can't animate, it would just pop in.
+        toCard.classList.add('entering');
+        void toCard.offsetWidth;
+      }
+      if (fromCard) {
+        fromCard.classList.remove('visible');
+        fromCard.classList.add('leaving');
+        setTimeout(function () { fromCard.classList.remove('leaving'); }, STEP_TRANSITION_MS);
+      }
+      if (toCard) {
+        toCard.classList.remove('entering');
+        toCard.classList.add('visible');
+      }
+    }
+
+    // Step 4: carousel the whole layout back to the original full-width
+    // 4-up grid (no persona photo) — the slot/arrow/photo fade out, then all
+    // four cards stagger in together.
+    function enterGridFinale() {
+      var stepview = document.getElementById('passos-stepview');
+      var gridview = document.getElementById('passos-gridview');
+      var arrow = document.getElementById('passo-arrow');
+      if (stepview) stepview.classList.add('leaving');
+      setTimeout(function () {
+        // Hide the arrow only once the whole stepview is already invisible
+        // and about to be removed — hiding it earlier frees its flex space
+        // immediately, snapping the persona photo sideways mid-fade.
+        if (arrow) arrow.style.display = 'none';
+        if (stepview) stepview.style.display = 'none';
+        if (gridview) {
+          gridview.classList.add('visible');
+          var cards = gridview.querySelectorAll('.passo-card');
+          cards.forEach(function (c, i) {
+            c.classList.remove('visible');
+            void c.offsetWidth;
+            c.style.animationDelay = (i * 90) + 'ms';
+            c.classList.add('visible');
+          });
+        }
+      }, STEP_TRANSITION_MS);
+    }
+
+    window.revealNextPasso = function () {
+      if (currentStep >= 4) return;
+      var next = currentStep + 1;
+      if (next < 4) {
+        switchStepCard(currentStep, next);
+        setPersona(next, true);
+      } else {
+        enterGridFinale();
+      }
+      currentStep = next;
+    };
+
+    function resetPassos() {
+      currentStep = 1;
+      var stepview = document.getElementById('passos-stepview');
+      var gridview = document.getElementById('passos-gridview');
+      var arrow = document.getElementById('passo-arrow');
+      [1, 2, 3].forEach(function (n) {
+        var c = document.getElementById('passo-' + n);
+        if (!c) return;
+        c.classList.remove('leaving', 'entering');
+        c.classList.toggle('visible', n === 1);
+      });
+      if (arrow) arrow.style.display = 'flex';
+      if (stepview) { stepview.classList.remove('leaving'); stepview.style.display = 'flex'; }
+      if (gridview) gridview.classList.remove('visible');
+      setPersona(1, false);
+    }
+
+    var deck = document.querySelector('deck-stage');
+    if (!deck) return;
+    deck.addEventListener('slidechange', function (e) {
+      if (e.detail.slide && e.detail.slide.id === 'slide-passos') resetPassos();
+    });
   })();
 </script>
 </body>
