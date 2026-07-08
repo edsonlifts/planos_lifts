@@ -140,6 +140,30 @@
     .passo-card.visible { animation:none; opacity:1; }
   }
 
+  /* Light-sweep reflex on the -10KG / -14KG badges: a soft diagonal streak
+     glides across the dark badge twice, then stays put. */
+  .kg-shine { position:relative; overflow:hidden; }
+  .kg-shine::after {
+    content:'';
+    position:absolute;
+    top:-60%;
+    left:-60%;
+    width:45%;
+    height:220%;
+    background:linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0) 100%);
+    transform:rotate(18deg);
+  }
+  section[data-deck-active] .kg-shine::after {
+    animation:kg-shine-sweep 1.9s cubic-bezier(.37,0,.63,1) 250ms 2;
+  }
+  @keyframes kg-shine-sweep {
+    0% { left:-60%; }
+    100% { left:140%; }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    .kg-shine::after { animation:none; }
+  }
+
   /* Fixed slot for the step-1/2/3 carousel: only one card visible at a time,
      the leaving one slides out left while the entering one slides in from
      the right, in the exact same slot so the arrow + persona photo never
@@ -247,9 +271,9 @@
     <div style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:44px;">
       <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada-lime.svg'); background-repeat:repeat-x; background-size:96px 96px;"></div>
       <div style="position:absolute; bottom:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada-lime.svg'); background-repeat:repeat-x; background-size:96px 96px; transform:scaleY(-1);"></div>
-      <img src="assets/horizontal-branco.png" alt="Clínica Lifts" style="width:520px; object-fit:contain;">
-      <div style="display:inline-block; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:84px; line-height:1; padding:20px 48px; transform:rotate(-1.5deg); text-transform:uppercase;">Bora começar?</div>
-      <p style="margin:0; font-weight:400; font-size:32px; color:#FFFFFF; max-width:900px; text-align:center;">Sua primeira consulta pode ser agendada <strong style="color:#CCCB3F;">hoje</strong>. Médico, nutri e personal — juntos, no seu ritmo.</p>
+      <img src="assets/horizontal-branco.png" alt="Clínica Lifts" style="position:relative; top:-50px; width:520px; object-fit:contain;">
+      <div style="position:relative; top:-50px; display:inline-block; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:84px; line-height:1; padding:20px 48px; transform:rotate(-1.5deg); text-transform:uppercase;">Parabéns por chegar aqui.</div>
+      <p style="position:relative; top:-20px; margin:0; font-weight:400; font-size:38px; color:#FFFFFF; max-width:1080px; text-align:center;">Sua primeira consulta pode ser agendada <strong style="color:#CCCB3F;">hoje</strong>. Médico, nutri e personal — juntos, no seu ritmo.</p>
     </div>
   </section>
 
@@ -334,7 +358,7 @@
         <h2 style="margin:0; font-weight:900; font-size:144px; line-height:1; color:#0F2638; text-transform:uppercase;">Felipe</h2>
         <div style="align-self:flex-start; display:inline-flex; flex-direction:column; gap:30px;">
           <div style="display:flex; align-items:baseline; gap:28px;">
-            <div style="display:inline-block; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:112px; line-height:1; padding:22px 40px; transform:rotate(-1.5deg);">−10 KG</div>
+            <div class="kg-shine" style="display:inline-block; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:112px; line-height:1; padding:22px 40px; transform:rotate(-1.5deg);">−10 KG</div>
             <span style="font-weight:800; font-size:48px; color:#0F2638; white-space:nowrap;">em 2 meses</span>
           </div>
           <div style="width:100%; height:250px; border-radius:16px; overflow:hidden; background-image:url('assets/felipeevolucao.png'); background-repeat:no-repeat; background-size:cover; background-position:center; box-shadow:0 16px 40px rgba(15,38,56,0.25);"></div>
@@ -359,7 +383,7 @@
         <h2 style="margin:0; font-weight:900; font-size:144px; line-height:1; color:#0F2638; text-transform:uppercase;">Mellanie</h2>
         <div style="align-self:flex-start; display:inline-flex; flex-direction:column; gap:30px;">
           <div style="display:flex; align-items:baseline; gap:28px;">
-            <div style="display:inline-block; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:112px; line-height:1; padding:22px 40px; transform:rotate(-1.5deg);">−14 KG</div>
+            <div class="kg-shine" style="display:inline-block; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:112px; line-height:1; padding:22px 40px; transform:rotate(-1.5deg);">−14 KG</div>
             <span style="font-weight:800; font-size:48px; color:#0F2638; white-space:nowrap;">em 3 meses</span>
           </div>
           <div style="width:100%; height:250px; border-radius:16px; overflow:hidden; background-image:url('assets/mell-evolucao.png'); background-repeat:no-repeat; background-size:cover; background-position:center; box-shadow:0 16px 40px rgba(15,38,56,0.25);"></div>
@@ -512,15 +536,15 @@
     </div>
   </section>
 
-  <!-- ============ 11 ORÇAMENTO (INTERACTIVE) ============ -->
-  <section data-label="11 Orçamento" data-speaker-notes="Interação: peça ao lead que escolha os profissionais que precisa. A combinação define o plano ideal. Médico só = Medical. Médico+Nutri = Nutrition. Nutri+Personal = Start. Todos = Elite." style="background:#060F1A; font-family:Poppins, sans-serif;">
+  <!-- ============ 11 PLANO (INTERACTIVE) ============ -->
+  <section data-label="11 Plano" data-speaker-notes="Interação: peça ao lead que escolha os profissionais que precisa. A combinação define o plano ideal. Médico só = Medical. Médico+Nutri = Nutrition. Nutri+Personal = Start. Todos = Elite." style="background:#060F1A; font-family:Poppins, sans-serif;">
     <div style="position:absolute; inset:36px; background:#CCCB3F; border-radius:40px; overflow:hidden; display:flex; box-sizing:border-box;">
       <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada.svg'); background-repeat:repeat-x; background-size:96px 96px; z-index:2;"></div>
       <img src="assets/emblema-azul-total.png" alt="" style="position:absolute; top:76px; right:76px; width:110px; height:110px; object-fit:contain; z-index:3;">
       <!-- Left: question + toggle buttons -->
       <div style="flex:0 0 50%; display:flex; flex-direction:column; justify-content:center; gap:32px; padding:120px 48px 90px 96px;">
-        <div style="font-weight:700; font-size:24px; letter-spacing:5px; color:#0F2638;">SEU ORÇAMENTO</div>
-        <h2 style="margin:0; font-weight:900; font-size:60px; line-height:1.1; color:#0F2638;">Vamos fazer SEU orçamento.</h2>
+        <div style="font-weight:700; font-size:24px; letter-spacing:5px; color:#0F2638;">SEU PLANO</div>
+        <h2 style="margin:0; font-weight:900; font-size:60px; line-height:1.1; color:#0F2638;">Vamos fazer SEU plano.</h2>
         <p style="margin:0; font-weight:500; font-size:30px; line-height:1.4; color:#0F2638;">Quais profissionais você sente que hoje precisa?</p>
         <div style="display:flex; gap:16px; margin-top:8px;">
           <div id="btn-medico" class="toggle-btn" onclick="toggleMedico()">Médico</div>
