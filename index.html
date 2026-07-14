@@ -66,6 +66,60 @@
   .toggle-btn.active { background:#0F2638; color:#CCCB3F; }
   .reveal-btn:hover { opacity:0.85; }
 
+  /* ---- 07 App -----------------------------------------------------------
+     Lime keeps the deck alternating (06 navy / 07 lime / 08 navy) and is also
+     what the asset needs: the phones are black, so they pop here and would
+     otherwise sink into a navy background. */
+  #app-feats { display:flex; flex-direction:column; gap:16px; font-size:36px; font-weight:500; color:#0F2638; }
+  #app-feats > div { display:flex; gap:16px; align-items:center; }
+  /* Navy chips, echoing the app's own icon tiles. They also fix contrast:
+     half these emoji render white/pale and would wash out on lime. Fixed width
+     keeps every sentence starting on the same vertical line. */
+  #app-feats .app-ico {
+    flex:0 0 52px;
+    height:52px;
+    border-radius:14px;
+    background:#0F2638;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    line-height:1;
+  }
+  #app-feats b { font-weight:800; }
+
+  #app-phones-wrap { position:absolute; inset:0; }
+  /* The asset's phones run right to its top edge (measured: opaque from 0%),
+     so it can't be cropped at the top — it sits below the 48px flag strip,
+     with float headroom. Only the faint shadow tail past ~97% is cropped off
+     the bottom. */
+  #app-phones {
+    position:absolute;
+    /* Nudged left of centre; the offset lives here so the float keyframes can
+       keep their plain translateX(-50%). */
+    left:calc(50% - 120px);
+    top:118px;
+    height:828px;
+    width:auto;
+    transform:translateX(-50%);
+  }
+  /* Entrance on the wrapper, idle drift on the image — kept on separate
+     elements so the two transforms don't fight over the same property. */
+  section[data-deck-active] #app-phones-wrap { animation:app-phones-in 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  section[data-deck-active] #app-phones { animation:app-phones-float 7s ease-in-out 900ms infinite; }
+  @keyframes app-phones-in {
+    from { opacity:0; transform:translateY(46px) scale(0.965); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+  @keyframes app-phones-float {
+    0%, 100% { transform:translateX(-50%) translateY(0); }
+    50%      { transform:translateX(-50%) translateY(-12px); }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    section[data-deck-active] #app-phones-wrap,
+    section[data-deck-active] #app-phones { animation:none; }
+  }
+
   /* ---- 11 Plano ---------------------------------------------------------
      One slide, two layouts. Picking = left column at half the slide. Once a
      plan is revealed the left column collapses to a rail (type shrinks, the
@@ -596,17 +650,28 @@
   </section>
 
   <!-- ============ 07 FEEDBACKS ============ -->
-  <section data-label="07 Feedbacks" data-speaker-notes="Prova social: print real de paciente. Deixar o print falar." style="background:#060F1A; font-family:Poppins, sans-serif;">
-    <div style="position:absolute; inset:36px; background:#CCCB3F; border-radius:40px; overflow:hidden; display:flex;">
-      <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada.svg'); background-repeat:repeat-x; background-size:96px 96px; z-index:2;"></div>
-      <div style="flex:0 0 42%; display:flex; flex-direction:column; justify-content:center; gap:32px; padding:120px 40px 90px 96px;">
-        <div style="font-weight:700; font-size:24px; letter-spacing:5px; color:#0F2638;">PROVA SOCIAL</div>
-        <h2 style="margin:0; font-weight:800; font-size:60px; line-height:1.15; color:#0F2638;">Feedbacks de quem vive isso</h2>
-        <div style="display:inline-block; align-self:flex-start; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:52px; line-height:1; padding:14px 32px; transform:rotate(-1.5deg);">QUASE 12 KG A MENOS</div>
-        <p style="margin:0; font-weight:400; font-size:28px; line-height:1.5; color:#0F2638; text-align:justify;">Relato espontâneo de paciente em acompanhamento. Resultado com consulta, dieta e treino integrados.</p>
+  <section data-label="07 App" data-speaker-notes="O app é o que sustenta o método no dia a dia: a dieta do dia, a meta de água e o progresso ficam na mão do paciente, e o chat liga ele direto na clínica. Mostrar que conecta com Apple Health e Google Health Connect, e que tem tema claro e escuro." style="background:#060F1A; font-family:Poppins, sans-serif;">
+    <div style="position:absolute; inset:36px; background:#CCCB3F; border-radius:40px; overflow:hidden; display:flex; box-sizing:border-box;">
+      <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada.svg'); background-repeat:repeat-x; background-size:96px 96px; z-index:3;"></div>
+      <div style="flex:0 0 55.5%; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; gap:28px; padding:120px 16px 90px 96px; z-index:2;">
+        <div style="font-weight:700; font-size:26px; letter-spacing:5px; color:#0F2638;">O APP DA LIFTS</div>
+        <h2 style="margin:0; font-weight:900; font-size:78px; line-height:1.02; color:#0F2638;">Seu plano inteiro no seu bolso.</h2>
+        <div class="kg-shine" style="display:inline-block; align-self:flex-start; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:32px; line-height:1; padding:18px 30px; transform:rotate(-1.5deg);">DIETA · TREINO · HIDRATAÇÃO</div>
+        <!-- Icons mirror the app's own: cutlery, water drop, scale, chat, heart. -->
+        <div id="app-feats">
+          <div><span class="app-ico">🍽️</span><span>Sua <b>dieta do dia</b>, refeição por refeição</span></div>
+          <div><span class="app-ico">💧</span><span><b>Meta de água</b> com registro em <b>1 toque</b></span></div>
+          <div><span class="app-ico">⚖️</span><span>Seu <b>peso</b> e sua <b>evolução</b> num lugar só</span></div>
+          <div><span class="app-ico">💬</span><span><b>Chat direto</b> com a Clínica Lifts</span></div>
+          <div><span class="app-ico">❤️</span><span>Conecta com <b>Apple Health</b> e <b>Health Connect</b></span></div>
+        </div>
       </div>
-      <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:80px 60px 50px 20px;">
-        <img src="pdf_images/p03-2.png" alt="Feedback de paciente" style="max-width:100%; max-height:100%; object-fit:contain; box-shadow:0 24px 60px rgba(15,38,56,0.35);">
+      <!-- The phones are the hero: oversized and bleeding past the card edge,
+           which the card's overflow:hidden crops into a clean edge. -->
+      <div style="flex:1; position:relative; z-index:1;">
+        <div id="app-phones-wrap">
+          <img id="app-phones" src="assets/CELULAR.webp" alt="App da Lifts em tema claro e escuro">
+        </div>
       </div>
     </div>
   </section>

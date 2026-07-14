@@ -62,7 +62,7 @@ Every slide follows this pattern:
 
 6. **06 Mercado x Lifts** — Navy bg. Two-column comparison. Left (navy-mid): market failures with red ✕. Right (lime, tilted -1deg): Lifts advantages with ↘ arrows.
 
-7. **07 Feedbacks** — Lime bg. Left: headline + navy box "QUASE 12 KG A MENOS". Right: screenshot of patient feedback.
+7. **07 App** — Lime bg. Left: headline "Seu plano inteiro no seu bolso.", tilted navy box "DIETA · TREINO · HIDRATAÇÃO" (shine), 5 feature rows with emoji in navy icon chips (chips echo the app's own icon tiles and keep the pale emoji legible — several render white and vanish on lime). Right: `assets/CELULAR.webp` (light + dark theme phones), floating. Lime is deliberate — the phones are black and sink into a navy bg, and it keeps 06/07/08 alternating. The asset is opaque from its top edge (0%), so it must clear the 48px flag strip; only the shadow tail past ~97% is safe to crop.
 
 8. **08 Manter é outra** — Navy bg. Stat "~80%" in lime box (tilted). Copy about weight regain. Large faded "2" in background. Reuters source citation.
 
