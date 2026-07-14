@@ -45,23 +45,172 @@
     deck-stage > section { transition:none; transform:none; }
   }
 
-  .toggle-btn { 
-    padding:22px 0;
-    font-size:28px;
+  .toggle-btn {
+    padding:32px 8px;
+    font-size:38px;
     font-weight:800;
     font-family:'Poppins', sans-serif;
     cursor:pointer;
     user-select:none;
-    transition:all 200ms ease;
+    /* Not `all` — the restack animates `transform` on its own clock (see FLIP). */
+    transition:background 200ms ease, color 200ms ease, opacity 200ms ease,
+               padding var(--plano-dur, 620ms) var(--plano-ease, ease);
     text-align:center;
+    white-space:nowrap;
     flex:1;
-    border:3px solid #0F2638;
+    border:4px solid #0F2638;
     background:transparent;
     color:#0F2638;
   }
   .toggle-btn:hover { opacity:0.85; }
   .toggle-btn.active { background:#0F2638; color:#CCCB3F; }
   .reveal-btn:hover { opacity:0.85; }
+
+  /* ---- 11 Plano ---------------------------------------------------------
+     One slide, two layouts. Picking = left column at half the slide. Once a
+     plan is revealed the left column collapses to a rail (type shrinks, the
+     three toggles restack into a vertical column) and the plan box takes the
+     freed width — it roughly doubles, which is what makes it legible when the
+     deck is scaled down onto a phone.
+     Everything that moves shares --plano-dur/--plano-ease, so the collapse,
+     the type shrinking, the button restack (FLIP, driven in JS) and the plan
+     box landing all read as a single motion. */
+  /* Single source of truth for the reveal motion: the CSS transitions below
+     and the JS-driven button FLIP both read these, so the whole move stays in
+     lockstep — retime it here and nothing else needs touching. */
+  #plano-card { --plano-dur:900ms; --plano-ease:cubic-bezier(0.22, 1, 0.36, 1); }
+
+  #plano-left {
+    flex:0 0 50%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:40px;
+    padding:120px 48px 90px 96px;
+    transition:flex-basis var(--plano-dur) var(--plano-ease),
+               gap var(--plano-dur) var(--plano-ease),
+               padding var(--plano-dur) var(--plano-ease);
+  }
+  #plano-card.revealed #plano-left { flex-basis:17%; gap:22px; padding:60px 24px 60px 56px; }
+
+  #plano-kicker {
+    font-weight:700; font-size:28px; letter-spacing:5px; color:#0F2638;
+    transition:font-size var(--plano-dur) var(--plano-ease),
+               letter-spacing var(--plano-dur) var(--plano-ease);
+  }
+  #plano-card.revealed #plano-kicker { font-size:19px; letter-spacing:3px; }
+
+  #plano-h2 {
+    margin:0; font-weight:900; font-size:88px; line-height:1.05; color:#0F2638;
+    transition:font-size var(--plano-dur) var(--plano-ease);
+  }
+  #plano-card.revealed #plano-h2 { font-size:38px; }
+
+  #plano-question {
+    margin:0; font-weight:500; font-size:40px; line-height:1.35; color:#0F2638;
+    transition:font-size var(--plano-dur) var(--plano-ease);
+  }
+  #plano-card.revealed #plano-question { font-size:21px; }
+
+  #plano-btnrow { display:flex; gap:16px; margin-top:8px; }
+  #plano-card.revealed #plano-btnrow { flex-direction:column; gap:12px; }
+  /* Row: three equal columns. Rail: natural height, full rail width. */
+  #plano-card.revealed .toggle-btn { flex:0 0 auto; padding:26px 8px; }
+
+  #plano-right {
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:110px 72px 80px 20px;
+    transition:padding var(--plano-dur) var(--plano-ease);
+  }
+  #plano-card.revealed #plano-right { padding:56px 64px 56px 28px; }
+
+  /* The plan box claims the top-right corner the emblema sits in, and both are
+     navy — leaving it would slice the logo in half. It leaves with the rest. */
+  #plano-emblema { transition:opacity var(--plano-dur, 620ms) var(--plano-ease, ease); }
+  #plano-card.revealed #plano-emblema { opacity:0; }
+
+  /* The plan box only ever exists in the revealed layout, so it is sized for
+     the wide rail-layout column outright. */
+  .plan-box {
+    background:#0F2638;
+    padding:56px 64px;
+    width:100%;
+    flex-direction:column;
+    gap:22px;
+    transform:rotate(-1deg);
+    animation:planBoxIn var(--plano-dur) var(--plano-ease) both;
+  }
+  @keyframes planBoxIn {
+    from { opacity:0; transform:rotate(-1deg) scale(0.92); }
+    to   { opacity:1; transform:rotate(-1deg) scale(1); }
+  }
+  .plan-eyebrow { font-weight:700; font-size:28px; letter-spacing:4px; color:#CCCB3F; }
+  .plan-title { font-weight:900; font-size:76px; line-height:1; color:#FFFFFF; }
+  .plan-pricerow { display:flex; align-items:baseline; gap:14px; }
+  .plan-from { font-weight:500; font-size:30px; color:#FFFFFF; opacity:0.5; }
+  .plan-x { font-weight:700; font-size:44px; color:#CCCB3F; }
+  .plan-price { font-weight:900; font-size:88px; line-height:1; color:#CCCB3F; }
+  .plan-per { font-weight:500; font-size:32px; color:#FFFFFF; opacity:0.5; }
+  .plan-rule { width:100%; height:2px; background:#CCCB3F; opacity:0.25; }
+  .plan-feats { display:flex; flex-direction:column; gap:12px; font-size:30px; font-weight:500; color:#FFFFFF; }
+  .plan-feats > div { display:flex; gap:16px; }
+  .plan-feats span:first-child { color:#CCCB3F; font-weight:900; }
+  .plan-bonus { font-size:28px; font-weight:700; color:#CCCB3F; margin-top:4px; }
+  .plan-badge { background:#CCCB3F; color:#0F2638; font-weight:800; font-size:24px; padding:8px 20px; }
+
+  /* Elite is the flagship, so it earns a richer treatment than the other three:
+     depth instead of flat navy, a lime keyline frame, more elevation, and the
+     deck's existing shine sweep (.kg-shine) firing as it lands. The other cards
+     stay flat on purpose — that contrast is the point. */
+  #budget-elite {
+    background:linear-gradient(150deg, #16405E 0%, #0F2638 52%, #081420 100%);
+    box-shadow:0 34px 74px rgba(6, 15, 26, 0.55);
+  }
+  #budget-elite::before {
+    content:'';
+    position:absolute;
+    inset:16px;
+    border:2px solid rgba(204, 203, 63, 0.45);
+    pointer-events:none;
+    z-index:1;
+  }
+  #budget-elite .plan-title { text-shadow:0 4px 18px rgba(0, 0, 0, 0.35); }
+  #budget-elite .plan-price { text-shadow:0 4px 22px rgba(204, 203, 63, 0.25); }
+  #budget-elite .plan-badge { box-shadow:0 6px 18px rgba(6, 15, 26, 0.45); }
+
+  /* Elite only: the nine extras live behind a tap, same cross-fade idiom as the
+     slide 6 boxes. Height is fixed to the taller of the two faces so swapping
+     never resizes the card. */
+  /* Tall enough for the extras face (the taller of the two) plus slack. */
+  #elite-swap { position:relative; height:324px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  #elite-core, #elite-extra {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; gap:22px;
+    transition:opacity 350ms ease;
+  }
+  #elite-extra { opacity:0; pointer-events:none; }
+  #elite-swap.open #elite-core { opacity:0; pointer-events:none; }
+  #elite-swap.open #elite-extra { opacity:1; pointer-events:auto; }
+  .elite-extra-head { font-weight:800; font-size:26px; letter-spacing:3px; color:#CCCB3F; }
+  /* 5 rows filled top-to-bottom, then the second column — 5 + 4. */
+  .elite-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:repeat(5, auto);
+    grid-auto-flow:column;
+    gap:12px 48px;
+    font-size:28px; font-weight:500; color:#FFFFFF;
+  }
+  .elite-grid > div { display:flex; gap:14px; align-items:baseline; }
+  .elite-grid span:first-child { color:#CCCB3F; font-weight:900; }
+
+  @media (prefers-reduced-motion:reduce) {
+    #plano-left, #plano-kicker, #plano-h2, #plano-question, #plano-right { transition:none; }
+    .plan-box { animation:none; }
+  }
 
   /* ── Custom deck navigation: side arrows + dot pagination ─────────── */
   .deck-nav-arrow {
@@ -538,97 +687,117 @@
 
   <!-- ============ 11 PLANO (INTERACTIVE) ============ -->
   <section data-label="11 Plano" data-speaker-notes="Interação: peça ao lead que escolha os profissionais que precisa. A combinação define o plano ideal. Médico só = Medical. Médico+Nutri = Nutrition. Nutri+Personal = Start. Todos = Elite." style="background:#060F1A; font-family:Poppins, sans-serif;">
-    <div style="position:absolute; inset:36px; background:#CCCB3F; border-radius:40px; overflow:hidden; display:flex; box-sizing:border-box;">
+    <div id="plano-card" style="position:absolute; inset:36px; background:#CCCB3F; border-radius:40px; overflow:hidden; display:flex; box-sizing:border-box;">
       <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada.svg'); background-repeat:repeat-x; background-size:96px 96px; z-index:2;"></div>
-      <img src="assets/emblema-azul-total.png" alt="" style="position:absolute; top:76px; right:76px; width:110px; height:110px; object-fit:contain; z-index:3;">
-      <!-- Left: question + toggle buttons -->
-      <div style="flex:0 0 50%; display:flex; flex-direction:column; justify-content:center; gap:32px; padding:120px 48px 90px 96px;">
-        <div style="font-weight:700; font-size:24px; letter-spacing:5px; color:#0F2638;">SEU PLANO</div>
-        <h2 style="margin:0; font-weight:900; font-size:60px; line-height:1.1; color:#0F2638;">Vamos fazer SEU plano.</h2>
-        <p style="margin:0; font-weight:500; font-size:30px; line-height:1.4; color:#0F2638;">Quais profissionais você sente que hoje precisa?</p>
-        <div style="display:flex; gap:16px; margin-top:8px;">
+      <img id="plano-emblema" src="assets/emblema-azul-total.png" alt="" style="position:absolute; top:76px; right:76px; width:110px; height:110px; object-fit:contain; z-index:3;">
+      <!-- Left: question + toggle buttons. Collapses to a rail once revealed. -->
+      <div id="plano-left">
+        <div id="plano-kicker">SEU PLANO</div>
+        <h2 id="plano-h2">Vamos fazer SEU plano.</h2>
+        <p id="plano-question">Quais profissionais você sente que hoje precisa?</p>
+        <div id="plano-btnrow">
           <div id="btn-medico" class="toggle-btn" onclick="toggleMedico()">Médico</div>
           <div id="btn-nutri" class="toggle-btn" onclick="toggleNutri()">Nutricionista</div>
           <div id="btn-personal" class="toggle-btn" onclick="togglePersonal()">Personal</div>
         </div>
       </div>
       <!-- Right: plan result -->
-      <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:110px 72px 80px 20px;">
-        <div id="budget-noplan" style="display:flex; flex-direction:column; align-items:center; gap:24px; opacity:0.3;">
-          <div style="font-weight:900; font-size:140px; line-height:1; color:#0F2638;">?</div>
-          <p style="margin:0; font-weight:600; font-size:26px; color:#0F2638; text-align:center;">Selecione acima para<br>ver seu plano ideal</p>
+      <div id="plano-right">
+        <div id="budget-noplan" style="display:flex; flex-direction:column; align-items:center; gap:28px; opacity:0.42;">
+          <div style="font-weight:900; font-size:170px; line-height:1; color:#0F2638;">?</div>
+          <p style="margin:0; font-weight:600; font-size:34px; line-height:1.35; color:#0F2638; text-align:center;">Selecione acima para<br>só ver seu plano ideal</p>
         </div>
-        <div id="budget-revealbtn" class="reveal-btn" style="display:none; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:36px; padding:28px 56px; cursor:pointer; user-select:none; text-align:center; transform:rotate(-1.5deg); transition:all 200ms ease;" onclick="revealPlan()">VER MEU PLANO IDEAL ↘</div>
-        <div id="budget-medical" style="display:none; background:#0F2638; padding:40px 44px; width:100%; flex-direction:column; gap:16px; transform:rotate(-1deg);">
-          <div style="font-weight:700; font-size:20px; letter-spacing:4px; color:#CCCB3F;">PLANO TRIMESTRAL</div>
-          <div style="font-weight:900; font-size:56px; line-height:1; color:#FFFFFF;">Lifts MEDICAL</div>
-          <div style="display:flex; align-items:baseline; gap:10px;">
-            <span style="font-weight:500; font-size:22px; color:#FFFFFF; opacity:0.5;">de <s>R$ 1.199</s></span>
-            <span style="font-weight:700; font-size:32px; color:#CCCB3F;">3x</span>
-            <span style="font-weight:900; font-size:64px; line-height:1; color:#CCCB3F;">R$ 199</span>
-            <span style="font-weight:500; font-size:24px; color:#FFFFFF; opacity:0.5;">/mês</span>
+        <div id="budget-revealbtn" class="reveal-btn" style="display:none; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:40px; padding:32px 48px; cursor:pointer; user-select:none; text-align:center; transform:rotate(-1.5deg); transition:all 200ms ease;" onclick="revealPlan()">VER MEU PLANO IDEAL ↘</div>
+        <div id="budget-medical" class="plan-box" style="display:none;">
+          <div class="plan-eyebrow">PLANO TRIMESTRAL</div>
+          <div class="plan-title">Lifts MEDICAL</div>
+          <div class="plan-pricerow">
+            <span class="plan-from">de <s>R$ 1.199</s></span>
+            <span class="plan-x">3x</span>
+            <span class="plan-price">R$ 199</span>
+            <span class="plan-per">/mês</span>
           </div>
-          <div style="width:100%; height:2px; background:#CCCB3F; opacity:0.25;"></div>
-          <div style="display:flex; flex-direction:column; gap:8px; font-size:22px; font-weight:500; color:#FFFFFF;">
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Consulta + retorno médico</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Receita caneta emagrecedora*</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Desconto Programa Lilly</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Conduta baseada em evidência</span></div>
+          <div class="plan-rule"></div>
+          <div class="plan-feats">
+            <div><span>↘</span><span>Consulta + retorno médico</span></div>
+            <div><span>↘</span><span>Receita caneta emagrecedora*</span></div>
+            <div><span>↘</span><span>Desconto Programa Lilly</span></div>
+            <div><span>↘</span><span>Conduta baseada em evidência</span></div>
           </div>
         </div>
-        <div id="budget-start" style="display:none; background:#0F2638; padding:40px 44px; width:100%; flex-direction:column; gap:16px; transform:rotate(-1deg);">
-          <div style="font-weight:700; font-size:20px; letter-spacing:4px; color:#CCCB3F;">PLANO · 6 MESES</div>
-          <div style="font-weight:900; font-size:56px; line-height:1; color:#FFFFFF;">Lifts START</div>
-          <div style="display:flex; align-items:baseline; gap:10px;">
-            <span style="font-weight:500; font-size:22px; color:#FFFFFF; opacity:0.5;">de <s>R$ 1.574</s></span>
-            <span style="font-weight:700; font-size:32px; color:#CCCB3F;">6x</span>
-            <span style="font-weight:900; font-size:64px; line-height:1; color:#CCCB3F;">R$ 197,48</span>
+        <div id="budget-start" class="plan-box" style="display:none;">
+          <div class="plan-eyebrow">PLANO · 6 MESES</div>
+          <div class="plan-title">Lifts START</div>
+          <div class="plan-pricerow">
+            <span class="plan-from">de <s>R$ 1.574</s></span>
+            <span class="plan-x">6x</span>
+            <span class="plan-price">R$ 197,48</span>
           </div>
-          <div style="width:100%; height:2px; background:#CCCB3F; opacity:0.25;"></div>
-          <div style="display:flex; flex-direction:column; gap:8px; font-size:22px; font-weight:500; color:#FFFFFF;">
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>2 consultas Nutri + 2 Personal</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Plano nutricional personalizado</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Treino direcionado</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Acompanhamento 100% on-line</span></div>
+          <div class="plan-rule"></div>
+          <div class="plan-feats">
+            <div><span>↘</span><span>2 consultas Nutri + 2 Personal</span></div>
+            <div><span>↘</span><span>Plano nutricional personalizado</span></div>
+            <div><span>↘</span><span>Treino direcionado</span></div>
+            <div><span>↘</span><span>Acompanhamento 100% on-line</span></div>
           </div>
-          <div style="font-size:20px; font-weight:700; color:#CCCB3F; margin-top:4px;">★ Bônus: +1 Nutri · +1 Personal · App</div>
+          <div class="plan-bonus">★ Bônus: +1 Nutri · +1 Personal · App</div>
         </div>
-        <div id="budget-nutrition" style="display:none; background:#0F2638; padding:40px 44px; width:100%; flex-direction:column; gap:16px; transform:rotate(-1deg);">
-          <div style="font-weight:700; font-size:20px; letter-spacing:4px; color:#CCCB3F;">PLANO · 6 MESES</div>
-          <div style="font-weight:900; font-size:56px; line-height:1; color:#FFFFFF;">Lifts NUTRITION</div>
-          <div style="display:flex; align-items:baseline; gap:10px;">
-            <span style="font-weight:500; font-size:22px; color:#FFFFFF; opacity:0.5;">de <s>R$ 1.574</s></span>
-            <span style="font-weight:700; font-size:32px; color:#CCCB3F;">6x</span>
-            <span style="font-weight:900; font-size:64px; line-height:1; color:#CCCB3F;">R$ 237,48</span>                 
+        <div id="budget-nutrition" class="plan-box" style="display:none;">
+          <div class="plan-eyebrow">PLANO · 6 MESES</div>
+          <div class="plan-title">Lifts NUTRITION</div>
+          <div class="plan-pricerow">
+            <span class="plan-from">de <s>R$ 1.574</s></span>
+            <span class="plan-x">6x</span>
+            <span class="plan-price">R$ 237,48</span>
           </div>
-          <div style="width:100%; height:2px; background:#CCCB3F; opacity:0.25;"></div>
-          <div style="display:flex; flex-direction:column; gap:8px; font-size:22px; font-weight:500; color:#FFFFFF;">
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>2 consultas Nutri + 2 Médico</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Plano nutricional personalizado</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Receita caneta emagrecedora*</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Acompanhamento 100% on-line</span></div>
+          <div class="plan-rule"></div>
+          <div class="plan-feats">
+            <div><span>↘</span><span>2 consultas Nutri + 2 Médico</span></div>
+            <div><span>↘</span><span>Plano nutricional personalizado</span></div>
+            <div><span>↘</span><span>Receita caneta emagrecedora*</span></div>
+            <div><span>↘</span><span>Acompanhamento 100% on-line</span></div>
           </div>
-          <div style="font-size:20px; font-weight:700; color:#CCCB3F; margin-top:4px;">★ Bônus: +1 Nutri · +1 Médico · App</div>
+          <div class="plan-bonus">★ Bônus: +1 Nutri · +1 Médico · App</div>
         </div>
-        <div id="budget-elite" style="display:none; background:#0F2638; padding:40px 44px; width:100%; flex-direction:column; gap:16px; transform:rotate(-1deg);">
+        <div id="budget-elite" class="plan-box" style="display:none;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-weight:700; font-size:20px; letter-spacing:4px; color:#CCCB3F;">PLANO · 6 MESES</div>
-            <div style="background:#CCCB3F; color:#0F2638; font-weight:800; font-size:18px; padding:6px 16px;">⚠ VAGAS LIMITADAS</div>
+            <div class="plan-eyebrow">PLANO · 6 MESES</div>
+            <div class="plan-badge kg-shine">⚠ VAGAS LIMITADAS</div>
           </div>
-          <div style="font-weight:900; font-size:56px; line-height:1; color:#FFFFFF;">Lifts ELITE</div>
-          <div style="display:flex; align-items:baseline; gap:10px;">
-            <span style="font-weight:500; font-size:22px; color:#FFFFFF; opacity:0.5;">de <s>R$ 2.394</s></span>
-            <span style="font-weight:700; font-size:32px; color:#CCCB3F;">6x</span>
-            <span style="font-weight:900; font-size:64px; line-height:1; color:#CCCB3F;">R$ 317,48</span>
+          <div class="plan-title">Lifts ELITE</div>
+          <div class="plan-pricerow">
+            <span class="plan-from">de <s>R$ 2.394</s></span>
+            <span class="plan-x">6x</span>
+            <span class="plan-price">R$ 317,48</span>
           </div>
-          <div style="width:100%; height:2px; background:#CCCB3F; opacity:0.25;"></div>
-          <div style="display:flex; flex-direction:column; gap:8px; font-size:22px; font-weight:500; color:#FFFFFF;">
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Médico + Nutri + Personal integrados</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Receita caneta + desconto medicações</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Plano nutricional + treino direcionado</span></div>
-            <div style="display:flex; gap:12px;"><span style="color:#CCCB3F; font-weight:900;">↘</span><span>Acompanhamento 100% on-line</span></div>
+          <div class="plan-rule"></div>
+          <!-- Tap swaps the core list for the nine Elite extras. Fixed height so
+               the card doesn't resize under the presenter's finger. -->
+          <div id="elite-swap" onclick="toggleEliteBenefits()" role="button" tabindex="0" aria-label="Mostrar os 9 benefícios exclusivos Elite">
+            <div id="elite-core">
+              <div class="plan-feats">
+                <div><span>↘</span><span>Médico + Nutri + Personal integrados</span></div>
+                <div><span>↘</span><span>Receita caneta emagrecedora*</span></div>
+                <div><span>↘</span><span>Plano nutricional + treino direcionado</span></div>
+                <div><span>↘</span><span>Acompanhamento 100% on-line</span></div>
+              </div>
+              <div class="plan-bonus">★ + 9 benefícios exclusivos Elite · toque para ver</div>
+            </div>
+            <div id="elite-extra">
+              <div class="elite-extra-head">★ BENEFÍCIOS ELITE</div>
+              <div class="elite-grid">
+                <div><span>✓</span><span>+1 Consulta Extra com Médico</span></div>
+                <div><span>✓</span><span>+1 Consulta Extra com Nutri</span></div>
+                <div><span>✓</span><span>+1 Consulta Extra com Personal</span></div>
+                <div><span>✓</span><span>APP de Dieta + Treino + Hidratação</span></div>
+                <div><span>✓</span><span>Comunidade Lifts</span></div>
+                <div><span>✓</span><span>Chat resposta até 24h</span></div>
+                <div><span>✓</span><span>Prioridade de Agendamento</span></div>
+                <div><span>✓</span><span>E-books Nutricionais exclusivos</span></div>
+                <div><span>✓</span><span>Guias de medida corporal</span></div>
+              </div>
+            </div>
           </div>
-          <div style="font-size:20px; font-weight:700; color:#CCCB3F; margin-top:4px;">★ + 9 benefícios exclusivos Elite</div>
         </div>
       </div>
     </div>
@@ -674,40 +843,126 @@
     return null;
   }
 
-  function updateBudgetUI() {
+  // Read the timing back out of the CSS rather than keeping a second copy here,
+  // so the FLIP below can never fall out of step with the CSS transitions.
+  function planoMotion() {
+    var cs = getComputedStyle(document.getElementById('plano-card'));
+    var raw = (cs.getPropertyValue('--plano-dur') || '').trim();
+    var dur = parseFloat(raw);
+    if (/[^m]s$/.test(raw)) dur *= 1000; // "0.9s" -> 900, "900ms" -> 900
+    return {
+      dur: dur > 0 ? dur : 900,
+      ease: (cs.getPropertyValue('--plano-ease') || '').trim() || 'ease'
+    };
+  }
+
+  function budgetToggleEls() {
+    return [
+      document.getElementById('btn-medico'),
+      document.getElementById('btn-nutri'),
+      document.getElementById('btn-personal')
+    ];
+  }
+
+  // The three toggles move between a row and a vertical rail, which flex can't
+  // tween (flex-direction doesn't animate). So FLIP them: measure, let the
+  // layout jump, invert it with a transform, then release. They stay real
+  // elements in the flow the whole time, so they never stop being clickable.
+  function flipToggles(applyLayoutChange) {
+    var motion = planoMotion();
+    var btns = budgetToggleEls();
+    var first = btns.map(function (b) { return b.getBoundingClientRect(); });
+
+    applyLayoutChange();
+
+    var last = btns.map(function (b) { return b.getBoundingClientRect(); });
+    // The deck scales the whole 1920x1080 canvas to fit the viewport, so these
+    // screen-space deltas have to come back into the slide's own coordinate
+    // space before they can be fed to a transform inside it.
+    var scale = (btns[0].offsetWidth && last[0].width / btns[0].offsetWidth) || 1;
+
+    btns.forEach(function (b, i) {
+      var dx = (first[i].left - last[i].left) / scale;
+      var dy = (first[i].top - last[i].top) / scale;
+      var sx = last[i].width ? first[i].width / last[i].width : 1;
+      b.style.transition = 'none';
+      b.style.transformOrigin = 'top left';
+      b.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scaleX(' + sx + ')';
+    });
+
+    void btns[0].offsetWidth; // commit the inverted position before releasing
+
+    btns.forEach(function (b) {
+      b.style.transition = 'transform ' + motion.dur + 'ms ' + motion.ease;
+      b.style.transform = '';
+    });
+    setTimeout(function () {
+      btns.forEach(function (b) {
+        b.style.transition = '';
+        b.style.transform = '';
+        b.style.transformOrigin = '';
+      });
+    }, motion.dur + 60);
+  }
+
+  function updateBudgetUI(animate) {
     var plan = computePlan();
+    var card = document.getElementById('plano-card');
 
     document.getElementById('btn-medico').classList.toggle('active', budgetState.medico);
     document.getElementById('btn-nutri').classList.toggle('active', budgetState.nutri);
     document.getElementById('btn-personal').classList.toggle('active', budgetState.personal);
 
-    var displays = {
-      noplan: 'flex',
-      revealbtn: 'block',
-      medical: 'flex',
-      start: 'flex',
-      nutrition: 'flex',
-      elite: 'flex'
-    };
-    Object.keys(displays).forEach(function (key) {
-      document.getElementById('budget-' + key).style.display = 'none';
-    });
+    var expanded = !!(plan && budgetState.revealed);
+    var wasExpanded = card.classList.contains('revealed');
 
-    if (plan === null) {
-      document.getElementById('budget-noplan').style.display = displays.noplan;
-    } else if (!budgetState.revealed) {
-      document.getElementById('budget-revealbtn').style.display = displays.revealbtn;
+    function applyLayout() {
+      ['noplan', 'revealbtn', 'medical', 'start', 'nutrition', 'elite'].forEach(function (key) {
+        document.getElementById('budget-' + key).style.display = 'none';
+      });
+      if (plan === null) {
+        document.getElementById('budget-noplan').style.display = 'flex';
+      } else if (!budgetState.revealed) {
+        document.getElementById('budget-revealbtn').style.display = 'block';
+      } else {
+        document.getElementById('budget-' + plan).style.display = 'flex';
+      }
+      // Leaving Elite closes its extras, so it always comes back on the core
+      // list rather than mid-pitch on the bonus panel.
+      var swap = document.getElementById('elite-swap');
+      if (swap && plan !== 'elite') swap.classList.remove('open');
+      // Drives the column collapse and the type shrinking, in CSS, on the same
+      // clock as the FLIP above — that is what keeps the whole thing one move.
+      card.classList.toggle('revealed', expanded);
+    }
+
+    if (animate !== false && expanded !== wasExpanded) {
+      flipToggles(applyLayout);
     } else {
-      document.getElementById('budget-' + plan).style.display = displays[plan];
+      applyLayout();
     }
   }
 
-  function toggleMedico() { budgetState.medico = !budgetState.medico; budgetState.revealed = false; updateBudgetUI(); }
-  function toggleNutri() { budgetState.nutri = !budgetState.nutri; budgetState.revealed = false; updateBudgetUI(); }
-  function togglePersonal() { budgetState.personal = !budgetState.personal; budgetState.revealed = false; updateBudgetUI(); }
+  function setBudget(key) {
+    budgetState[key] = !budgetState[key];
+    // Once a plan is on screen the toggles keep working and just swap it live,
+    // so the rail layout holds. Deselecting everything leaves nothing to show,
+    // which is the one case that collapses back to the picker.
+    if (computePlan() === null) budgetState.revealed = false;
+    updateBudgetUI();
+  }
+
+  function toggleMedico() { setBudget('medico'); }
+  function toggleNutri() { setBudget('nutri'); }
+  function togglePersonal() { setBudget('personal'); }
   function revealPlan() { budgetState.revealed = true; updateBudgetUI(); }
 
-  updateBudgetUI();
+  function toggleEliteBenefits() {
+    var swap = document.getElementById('elite-swap');
+    if (swap) swap.classList.toggle('open');
+  }
+
+  updateBudgetUI(false);
 </script>
 
 <script>
