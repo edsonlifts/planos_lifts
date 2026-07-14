@@ -816,11 +816,35 @@
   (function () {
     var currentStep = 1;
     var STEP_TRANSITION_MS = 420;
+    // Must match the opacity/transform transition on #passo-persona-img.
+    var PERSONA_FADE_MS = 320;
     var PASSO_PERSONAS = {
       1: { src: 'assets/medico.webp', alt: 'Médico', name: 'Dr. Guilherme Gazzi', role: 'Médico · UFCSPA' },
       2: { src: 'assets/nutri.webp', alt: 'Nutricionista', name: 'Maria Eduarda', role: 'Nutricionista' },
       3: { src: 'assets/samuka.webp', alt: 'Personal', name: 'Samuel', role: 'Treinador' }
     };
+
+    // src -> promise that settles once the file is fetched and decoded.
+    var personaReady = {};
+    // Guards against a stale swap landing after a newer one (fast clicking).
+    var personaToken = 0;
+
+    function preloadPersona(src) {
+      if (personaReady[src]) return personaReady[src];
+      var probe = new Image();
+      probe.src = src;
+      var p;
+      if (probe.decode) {
+        p = probe.decode().catch(function () {});
+      } else {
+        p = new Promise(function (resolve) {
+          if (probe.complete) return resolve();
+          probe.onload = probe.onerror = resolve;
+        });
+      }
+      personaReady[src] = p;
+      return p;
+    }
 
     function setPersona(step, animate) {
       var img = document.getElementById('passo-persona-img');
@@ -830,25 +854,40 @@
       if (!img) return;
       var info = PASSO_PERSONAS[step];
       if (!info) return;
-      if (!animate) {
+      var token = ++personaToken;
+
+      function apply() {
         img.src = info.src;
         img.alt = info.alt;
-        img.classList.remove('persona-hidden');
         if (tagName) tagName.textContent = info.name;
         if (tagRole) tagRole.textContent = info.role;
+      }
+      function reveal() {
+        img.classList.remove('persona-hidden');
         if (tag) tag.classList.remove('persona-hidden');
+      }
+
+      if (!animate) {
+        apply();
+        reveal();
         return;
       }
+
       img.classList.add('persona-hidden');
       if (tag) tag.classList.add('persona-hidden');
-      setTimeout(function () {
-        img.src = info.src;
-        img.alt = info.alt;
-        img.classList.remove('persona-hidden');
-        if (tagName) tagName.textContent = info.name;
-        if (tagRole) tagRole.textContent = info.role;
-        if (tag) tag.classList.remove('persona-hidden');
-      }, 300);
+
+      var faded = new Promise(function (resolve) { setTimeout(resolve, PERSONA_FADE_MS); });
+      Promise.all([faded, preloadPersona(info.src)]).then(function () {
+        if (token !== personaToken) return;
+        // The swap (and the reflow from the new photo's intrinsic size) happens
+        // while opacity is 0. Only fade back in once this element itself is
+        // ready to paint, so the photo is never revealed mid-load.
+        apply();
+        return img.decode ? img.decode().catch(function () {}) : null;
+      }).then(function () {
+        if (token !== personaToken) return;
+        reveal();
+      });
     }
 
     // Steps 1-3: the leaving card slides out to the left while the next one
@@ -930,6 +969,20 @@
       if (stepview) { stepview.classList.remove('leaving'); stepview.style.display = 'flex'; }
       if (gridview) gridview.classList.remove('visible');
       setPersona(1, false);
+    }
+
+    // Fetch every persona photo ahead of the first click, once the deck has
+    // finished its own initial paint — a cold cache is what made the first
+    // switch to each professional flash.
+    function preloadAllPersonas() {
+      Object.keys(PASSO_PERSONAS).forEach(function (step) {
+        preloadPersona(PASSO_PERSONAS[step].src);
+      });
+    }
+    if (window.requestIdleCallback) {
+      requestIdleCallback(preloadAllPersonas, { timeout: 2000 });
+    } else {
+      setTimeout(preloadAllPersonas, 300);
     }
 
     var deck = document.querySelector('deck-stage');
