@@ -64,13 +64,13 @@ Every slide follows this pattern:
 
 7. **07 App** — Lime bg. Left: headline "Seu plano inteiro no seu bolso.", tilted navy box "DIETA · TREINO · HIDRATAÇÃO" (shine), 5 feature rows with emoji in navy icon chips (chips echo the app's own icon tiles and keep the pale emoji legible — several render white and vanish on lime). Right: `assets/CELULAR.webp` (light + dark theme phones), floating. Lime is deliberate — the phones are black and sink into a navy bg, and it keeps 06/07/08 alternating. The asset is opaque from its top edge (0%), so it must clear the 48px flag strip; only the shadow tail past ~97% is safe to crop.
 
-8. **12 Suporte 24h** — Lime bg. Left: headline + navy box "24 HORAS" (tilted). Right: 2 chat screenshots (slightly rotated, with shadows). Moved here from the end of the deck; "08 Manter é outra" (the ~80% weight-regain stat) was removed.
+8. **12 Suporte 24h** — Lime bg. Left: tilted navy kicker plate, headline with the "24 HORAS" badge inline. Right: 2 chat screenshots (tilted, drifting like the slide 07 phones) — they render at ~half their native 1600px, so tapping opens one full size; below them the 💬 "app da Lifts" caption ties back to slide 07. Moved here from the end of the deck; "08 Manter é outra" (the ~80% weight-regain stat) was removed.
 
 9. **09 Estudo adesão** — Lime bg. Bar chart comparing 81% (guided) vs 52% (solo) adherence. Academic citation.
 
 10. **10 Custo sozinho** — Navy bg. Left: headline + 5 cost items, each with a red (`#E36B5C`) value; the five MUST sum to the R$ 7.400 in the box (1.800 + 1.500 + 2.100 + 900 + 1.100). Right: ONE box that flips on click — "≈ R$ 7.400 / sozinho, em 6 meses" (navy-mid, red rail + red number) → "a partir de R$ 197,48/mês" (lime, tilted). Costs are red, the Lifts price is lime; that contrast is the argument. Both sides span 6 months (START is literally 6x R$197,48 = R$1.184,88), so the comparison is like-for-like — keep it that way if the numbers change. Resets to the R$7.400 on slide change.
 
-11. **11 Orçamento (INTERACTIVE)** — Lime bg. Left: headline "Vamos fazer SEU orçamento", subtitle, 3 toggle buttons (Médico, Nutricionista, Personal). Right: initially shows "?" placeholder → after selecting buttons, shows "VER MEU PLANO IDEAL ↘" button → after clicking, reveals matching plan card.
+11. **11 Plano (INTERACTIVE)** — Lime bg. Left: headline "Vamos fazer SEU plano.", subtitle, 3 toggle buttons (Médico, Nutricionista, Personal). Right: a single "VER O PLANO IDEAL" CTA carrying the Lifts emblem — greyed and inert until a professional is picked, then live (same element size in both states, so it lights up rather than jumps) → clicking reveals the matching plan card and collapses the left column to a rail.
 
     **Selection logic:**
     - Médico only → Lifts MEDICAL (3x R$199, trimestral)
@@ -80,7 +80,7 @@ Every slide follows this pattern:
 
     **State management:**
     - `medico`, `nutri`, `personal`: boolean toggles
-    - `revealed`: boolean, set to true on "VER MEU PLANO IDEAL" click, reset to false on any toggle change
+    - `revealed`: boolean, set to true on the "VER O PLANO IDEAL" click. Toggles no longer reset it — once a plan is up they swap it live and the rail layout holds; only deselecting everything collapses back
     - Plan cards only show when `revealed === true`
 
     **Toggle button styles:**

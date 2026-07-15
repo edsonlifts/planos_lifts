@@ -64,7 +64,27 @@
   }
   .toggle-btn:hover { opacity:0.85; }
   .toggle-btn.active { background:#0F2638; color:#CCCB3F; }
-  .reveal-btn:hover { opacity:0.85; }
+  /* One button, two states — the greyed one is the same shape, so picking a
+     professional reads as it lighting up rather than something new appearing. */
+  .plano-cta {
+    background:#0F2638;
+    color:#CCCB3F;
+    font-weight:900;
+    font-size:40px;
+    line-height:1;
+    padding:30px 44px;
+    text-align:center;
+    user-select:none;
+    transform:rotate(-1.5deg);
+    transition:opacity 200ms ease;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+  }
+  .plano-cta:not(.plano-cta-off) { cursor:pointer; }
+  .plano-cta:not(.plano-cta-off):hover { opacity:0.85; }
+  .plano-cta-off { opacity:0.32; pointer-events:none; }
+  .cta-logo { height:48px; width:auto; flex:0 0 auto; }
 
   /* ---- 10 Custo sozinho -------------------------------------------------
      Two faces of one box. Fixed height sized to the taller (Lifts) face so the
@@ -145,6 +165,8 @@
   .custo-eyebrow { font-weight:700; font-size:29px; letter-spacing:3px; color:#FFFFFF; opacity:0.7; }
   .custo-big { font-weight:900; font-size:104px; line-height:1; color:#E36B5C; }
   .custo-hint { font-weight:700; font-size:26px; color:#CCCB3F; opacity:0.85; margin-top:10px; }
+  /* White emblem — the hint sits on navy. */
+  .custo-logo { height:40px; width:auto; vertical-align:middle; margin-left:8px; }
 
   .custo-eyebrow-dark { font-weight:700; font-size:29px; letter-spacing:3px; color:#0F2638; }
   .custo-from { font-weight:500; font-size:30px; color:#0F2638; }
@@ -203,11 +225,25 @@
     transform:rotate(-1.5deg);
     vertical-align:middle;
   }
+  /* Navy plate behind it, lime type — the deck's badge idiom. */
+  #sup-kicker {
+    align-self:flex-start;
+    background:#0F2638;
+    color:#CCCB3F;
+    font-weight:700;
+    font-size:29px;
+    letter-spacing:5px;
+    padding:12px 26px;
+    transform:rotate(-1.5deg);
+  }
+
   /* Callback to slide 07: same 💬 chip that slide used for "Chat direto com a
-     Clínica Lifts", so the support here visibly lives in that same app. */
+     Clínica Lifts", so the support here visibly lives in that same app. Sits
+     under the prints, captioning them. */
   #sup-app-note {
     display:flex;
     align-items:center;
+    justify-content:center;
     gap:16px;
     font-size:31px;
     font-weight:500;
@@ -872,7 +908,7 @@
     <div style="position:absolute; inset:36px; background:#CCCB3F; border-radius:40px; overflow:hidden; display:flex;">
       <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada.svg'); background-repeat:repeat-x; background-size:96px 96px; z-index:2;"></div>
       <div style="flex:0 0 44%; display:flex; flex-direction:column; justify-content:center; gap:30px; padding:120px 40px 90px 96px;">
-        <div style="font-weight:700; font-size:29px; letter-spacing:5px; color:#0F2638;">VOCÊ NUNCA FICA SOZINHO</div>
+        <div id="sup-kicker">VOCÊ NUNCA FICA SOZINHO</div>
         <!-- Break forced after "resposta" so "em até" and the badge share a
              line — the phrase reads straight through into the number. -->
         <!-- line-height carries the badge: it is ~116px tall inside a 52px
@@ -880,16 +916,17 @@
              above (measured: -11px at 1.25). -->
         <h2 style="margin:0; font-weight:800; font-size:52px; line-height:2.2; color:#0F2638;">Suporte com resposta<br>em até <span id="sup-badge">24 HORAS</span></h2>
         <p style="margin:0; font-weight:400; font-size:37px; line-height:1.45; color:#0F2638;">Dúvidas respondidas <b style="font-weight:800;">direto no chat</b>, por <b style="font-weight:800;">gente de verdade</b>.</p>
-        <div id="sup-app-note"><span class="app-ico">💬</span><span>Tudo isso dentro do <b>app da Lifts</b></span></div>
         <p style="margin:0; font-family:Inter, sans-serif; font-size:27px; color:#0F2638; opacity:0.65;">*Até 48h em finais de semana.</p>
       </div>
       <!-- Shifted left rather than re-padded, so the prints move without
-           shrinking. -->
-      <div style="flex:1; position:relative; left:-80px; display:flex; flex-direction:column; justify-content:center; gap:24px; padding:100px 70px 60px 20px;">
+           shrinking. The column is centred, so adding the note below lifts the
+           prints on its own. -->
+      <div style="flex:1; position:relative; left:-80px; display:flex; flex-direction:column; justify-content:center; gap:22px; padding:80px 70px 50px 20px;">
         <!-- Prints render at about half their native 1600px width here, which is
              why the chat is unreadable — tapping opens them at full size. -->
         <img class="sup-shot sup-shot-a" src="pdf_images/p18-2.png" alt="Atendimento no chat" role="button" tabindex="0" onclick="openSupZoom(this)">
         <img class="sup-shot sup-shot-b" src="pdf_images/p18-3.png" alt="Atendimento no chat" role="button" tabindex="0" onclick="openSupZoom(this)">
+        <div id="sup-app-note"><span class="app-ico">💬</span><span>Tudo isso dentro do <b>app da Lifts</b></span></div>
       </div>
       <!-- Zoom overlay: lives inside the card so the rounded corners clip it. -->
       <div id="sup-zoom" onclick="closeSupZoom()" role="button" aria-label="Fechar ampliação">
@@ -937,7 +974,7 @@
         <div id="custo-list">
           <div><span class="n">1</span><span class="t">Consultas médicas particulares</span><span class="v">R$ 1.800</span></div>
           <div><span class="n">2</span><span class="t">Consultas com nutricionista</span><span class="v">R$ 1.500</span></div>
-          <div><span class="n">3</span><span class="t">Personal trainer online com videochamada</span><span class="v">R$ 2.100</span></div>
+          <div><span class="n">3</span><span class="t">Personal trainer online</span><span class="v">R$ 2.100</span></div>
           <div><span class="n">4</span><span class="t">Exames desnecessários ou repetidos</span><span class="v">R$ 900</span></div>
           <div><span class="n">5</span><span class="t">Suplementos que não funcionam</span><span class="v">R$ 1.100</span></div>
         </div>
@@ -952,7 +989,7 @@
           <div id="custo-sozinho">
             <div class="custo-eyebrow">SOZINHO, EM 6 MESES</div>
             <div class="custo-big">≈ R$ 7.400</div>
-            <div class="custo-hint">toque para ver o da Lifts ↘</div>
+            <div class="custo-hint">toque para ver o da Lifts <img class="custo-logo" src="assets/emblema-branco.png" alt=""></div>
           </div>
           <div id="custo-lifts">
             <div class="custo-eyebrow-dark">COM A CLÍNICA LIFTS</div>
@@ -964,7 +1001,7 @@
             <!-- Period stays on the struck line: /mês vs a 6-month total are
                  different units and must not read as a like-for-like swap. -->
             <div class="custo-strike"><s>Sozinho: ≈ R$ 7.400 em 6 meses</s></div>
-            <div class="custo-note">Equipe integrada. Modelo testado. Ajustes quando necessário.</div>
+            <div class="custo-note">Equipe integrada. Modelo testado.<br>Acompanhamento diário.</div>
           </div>
         </div>
       </div>
@@ -989,11 +1026,10 @@
       </div>
       <!-- Right: plan result -->
       <div id="plano-right">
-        <div id="budget-noplan" style="display:flex; flex-direction:column; align-items:center; gap:28px; opacity:0.42;">
-          <div style="font-weight:900; font-size:170px; line-height:1; color:#0F2638;">?</div>
-          <p style="margin:0; font-weight:600; font-size:34px; line-height:1.35; color:#0F2638; text-align:center;">Selecione acima para<br>só ver seu plano ideal</p>
-        </div>
-        <div id="budget-revealbtn" class="reveal-btn" style="display:none; background:#0F2638; color:#CCCB3F; font-weight:900; font-size:40px; padding:32px 48px; cursor:pointer; user-select:none; text-align:center; transform:rotate(-1.5deg); transition:all 200ms ease;" onclick="revealPlan()">VER MEU PLANO IDEAL ↘</div>
+        <!-- Same button in two states: inert and greyed until a professional is
+             picked, then live. It never moves, so selecting only lights it up. -->
+        <div id="budget-noplan" class="plano-cta plano-cta-off">VER O PLANO IDEAL <img class="cta-logo" src="assets/emblema-branco.png" alt=""></div>
+        <div id="budget-revealbtn" class="plano-cta" style="display:none;" onclick="revealPlan()">VER O PLANO IDEAL <img class="cta-logo" src="assets/emblema-branco.png" alt=""></div>
         <div id="budget-medical" class="plan-box" style="display:none;">
           <div class="plan-eyebrow">PLANO TRIMESTRAL</div>
           <div class="plan-title">Lifts MEDICAL</div>
@@ -1191,7 +1227,7 @@
       if (plan === null) {
         document.getElementById('budget-noplan').style.display = 'flex';
       } else if (!budgetState.revealed) {
-        document.getElementById('budget-revealbtn').style.display = 'block';
+        document.getElementById('budget-revealbtn').style.display = 'flex';
       } else {
         document.getElementById('budget-' + plan).style.display = 'flex';
       }
