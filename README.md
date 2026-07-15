@@ -64,11 +64,11 @@ Every slide follows this pattern:
 
 7. **07 App** — Lime bg. Left: headline "Seu plano inteiro no seu bolso.", tilted navy box "DIETA · TREINO · HIDRATAÇÃO" (shine), 5 feature rows with emoji in navy icon chips (chips echo the app's own icon tiles and keep the pale emoji legible — several render white and vanish on lime). Right: `assets/CELULAR.webp` (light + dark theme phones), floating. Lime is deliberate — the phones are black and sink into a navy bg, and it keeps 06/07/08 alternating. The asset is opaque from its top edge (0%), so it must clear the 48px flag strip; only the shadow tail past ~97% is safe to crop.
 
-8. **08 Manter é outra** — Navy bg. Stat "~80%" in lime box (tilted). Copy about weight regain. Large faded "2" in background. Reuters source citation.
+8. **12 Suporte 24h** — Lime bg. Left: headline + navy box "24 HORAS" (tilted). Right: 2 chat screenshots (slightly rotated, with shadows). Moved here from the end of the deck; "08 Manter é outra" (the ~80% weight-regain stat) was removed.
 
 9. **09 Estudo adesão** — Lime bg. Bar chart comparing 81% (guided) vs 52% (solo) adherence. Academic citation.
 
-10. **10 Custo sozinho** — Navy bg. Left: 5 cost items. Right: two cards — "≈ R$ 3.700" (navy-mid) vs "R$ 229/mês" (lime, tilted).
+10. **10 Custo sozinho** — Navy bg. Left: headline + 5 cost items, each with a red (`#E36B5C`) value; the five MUST sum to the R$ 7.400 in the box (1.800 + 1.500 + 2.100 + 900 + 1.100). Right: ONE box that flips on click — "≈ R$ 7.400 / sozinho, em 6 meses" (navy-mid, red rail + red number) → "a partir de R$ 197,48/mês" (lime, tilted). Costs are red, the Lifts price is lime; that contrast is the argument. Both sides span 6 months (START is literally 6x R$197,48 = R$1.184,88), so the comparison is like-for-like — keep it that way if the numbers change. Resets to the R$7.400 on slide change.
 
 11. **11 Orçamento (INTERACTIVE)** — Lime bg. Left: headline "Vamos fazer SEU orçamento", subtitle, 3 toggle buttons (Médico, Nutricionista, Personal). Right: initially shows "?" placeholder → after selecting buttons, shows "VER MEU PLANO IDEAL ↘" button → after clicking, reveals matching plan card.
 
@@ -88,11 +88,9 @@ Every slide follows this pattern:
     - Active: navy bg, lime text, 3px navy border
     - All: 28px Poppins 800, flex:1, cursor pointer, 200ms transition
 
-12. **15 Suporte 24h** — Lime bg. Left: headline + navy box "24 HORAS" (tilted). Right: 2 chat screenshots (slightly rotated, with shadows).
+12. **16 Lifts Medical** — Lime bg. Dedicated Medical plan slide with full details. Left: plan name, description, price (3x R$199). Right: included items list.
 
-13. **16 Lifts Medical** — Lime bg. Dedicated Medical plan slide with full details. Left: plan name, description, price (3x R$199). Right: included items list.
-
-14. **17 CTA** — Navy bg. Centered. Logo, lime box "Bora começar?" (tilted), subtitle. Checker bands top and bottom.
+13. **17 CTA** — Navy bg. Centered. Logo, lime box "Bora começar?" (tilted), subtitle. Checker bands top and bottom.
 
 ## Assets
 All assets are included in the handoff folder:
