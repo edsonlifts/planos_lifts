@@ -151,43 +151,141 @@
   .res-meta b { font-weight:800; opacity:1; }
   .res-meta-you { text-align:center; line-height:1.35; }
 
-  /* The patient's card reads as an outline, not a photograph — dashed, empty,
-     waiting to be filled. That difference is doing real work: the other two
-     happened, this one hasn't. */
+  /* The patient's card is a goal card, not an empty photo slot — the number
+     fills the frame. Height = photo + gap + badge, so it swallows the badge row
+     the other two use and the three names line up. */
   .res-photo-you {
+    position:relative;
+    height:640px;
     background:rgba(204, 203, 63, 0.06);
-    border:4px dashed rgba(204, 203, 63, 0.55);
+    border:4px dashed rgba(204, 203, 63, 0.5);
     box-shadow:none;
     box-sizing:border-box;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:26px;
+    gap:38px;
+    padding:30px 16px;
   }
-  .res-photo-you img { width:132px; height:132px; object-fit:contain; opacity:0.9; }
-  .res-you-label { font-weight:900; font-size:46px; letter-spacing:6px; color:#CCCB3F; opacity:0.9; }
-  /* Outlined rather than filled: it is a target, not an achieved number. */
-  .res-kg-you {
-    background:transparent;
-    color:#CCCB3F;
-    border:3px solid #CCCB3F;
-    padding:9px 23px;
+
+  /* Peels from its bottom-right corner and swings off the card, like lifting a
+     sticker. inset:-4px so it covers the dashed border too, otherwise the frame
+     shows around it and gives the reveal away. */
+  #res-you-cover {
+    position:absolute;
+    inset:-4px;
+    z-index:2;
+    background:#CCCB3F;
+    border-radius:20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    box-shadow:0 18px 44px rgba(0, 0, 0, 0.32);
+    transform-origin:100% 100%;
+    transition:transform 760ms cubic-bezier(0.22, 1, 0.36, 1),
+               opacity 760ms ease,
+               box-shadow 760ms ease;
   }
-  /* Shape carries two numbers, so it needs smaller type to stay inside the
-     card — at the single-line size the pair overflows the slide. */
-  .res-kg-shape {
-    font-size:28px;
-    line-height:1.3;
-    padding:12px 20px;
-    text-align:center;
+  #res-you-cover.peeled {
+    transform:rotate(16deg) translate(14%, 48%);
+    opacity:0;
+    pointer-events:none;
+    box-shadow:0 50px 90px rgba(0, 0, 0, 0.5);
   }
-  .res-kg-shape b { font-weight:900; font-size:32px; }
+  #res-you-cover-label { font-weight:900; font-size:62px; letter-spacing:8px; color:#0F2638; }
+  #res-you-cover-hint { font-weight:700; font-size:22px; color:#0F2638; opacity:0.6; }
+  @media (prefers-reduced-motion:reduce) {
+    #res-you-cover { transition:opacity 200ms ease; }
+    #res-you-cover.peeled { transform:none; }
+  }
+  .res-you-eyebrow { font-weight:800; font-size:25px; letter-spacing:5px; color:#CCCB3F; opacity:0.85; }
+  .res-you-figure { color:#CCCB3F; text-align:center; }
+  #res-you-single { display:flex; flex-direction:column; align-items:center; line-height:0.92; }
+  #res-you-kg { font-weight:900; font-size:132px; }
+  .res-you-unit { font-weight:900; font-size:50px; letter-spacing:6px; }
+  .res-you-period { font-weight:600; font-size:26px; color:#FFFFFF; opacity:0.7; }
+  /* Shape carries two numbers, so it steps down to fit the frame's width. */
+  /* Sized for the two-digit worst case ("−12 KG gordura"), not the default. */
+  #res-you-shape { font-weight:600; font-size:27px; line-height:1.6; }
+  #res-you-shape b { font-weight:900; font-size:38px; }
 
   /* ---- 10 Custo sozinho -------------------------------------------------
      Two faces of one box. Fixed height sized to the taller (Lifts) face so the
      card doesn't resize mid-pitch; the loner fades back as the lime one lands
      tilted, which is the moment the contrast has to read. */
+  /* The card is now just the frame; each view carries the layout so the two
+     can stack and cross-fade. */
+  .custo-view {
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    padding:110px 96px 80px 96px;
+    box-sizing:border-box;
+    gap:72px;
+    transition:opacity 460ms ease;
+  }
+  #custo-view-log { opacity:0; pointer-events:none; }
+  #custo-card.logistica #custo-view-custo { opacity:0; pointer-events:none; }
+  #custo-card.logistica #custo-view-log { opacity:1; pointer-events:auto; }
+
+  #custo-switch {
+    position:absolute;
+    top:74px;
+    right:74px;
+    z-index:4;
+    background:#CCCB3F;
+    color:#0F2638;
+    border:none;
+    font-family:Poppins, sans-serif;
+    font-weight:900;
+    font-size:25px;
+    letter-spacing:3px;
+    padding:15px 28px;
+    cursor:pointer;
+    transform:rotate(-1.5deg);
+    transition:opacity 200ms ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #custo-switch:hover { opacity:0.85; }
+
+  #log-list {
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+    margin-top:40px;
+    font-size:31px;
+    font-weight:400;
+    line-height:1.35;
+    color:#FFFFFF;
+  }
+  #log-list > div { display:flex; gap:18px; align-items:baseline; }
+  /* Fixed width so every sentence starts on the same vertical line, whatever
+     each emoji's natural width is. */
+  #log-list .m { flex:0 0 52px; font-size:38px; line-height:1.1; text-align:center; }
+  #log-list b { font-weight:800; color:#CCCB3F; }
+  #log-foot { margin:34px 0 0 0; font-size:26px; line-height:1.45; font-weight:400; color:#FFFFFF; opacity:0.55; }
+
+  #log-box {
+    background:#CCCB3F;
+    padding:52px 46px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    text-align:center;
+    transform:rotate(-1.5deg);
+    box-shadow:0 30px 70px rgba(0, 0, 0, 0.35);
+  }
+  .log-eyebrow { font-weight:800; font-size:26px; letter-spacing:4px; color:#0F2638; opacity:0.75; }
+  .log-big { font-weight:900; font-size:96px; line-height:0.95; color:#0F2638; }
+  .log-note { font-weight:600; font-size:26px; line-height:1.35; color:#0F2638; opacity:0.8; }
+
   #custo-list {
     display:flex;
     flex-direction:column;
@@ -692,6 +790,72 @@
     .kg-shine::after { animation:none; }
   }
 
+  /* 15 Próximos passos: five columns of rising height standing on the lime floor
+     strip, drawing a staircase up to the payoff — the slide's own subject, since
+     each card carries one line of copy and nothing else to fill it with. Card
+     anatomy is the 4-passos one (navy-mid card, lime number chip). Heights come
+     off --prox-step so the flight stays even; the tallest is the grid height and
+     each one below drops by exactly one step. */
+  #prox-grid {
+    --prox-step: 88px;
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:24px;
+    align-items:end;
+    z-index:1;
+  }
+  .prox-card {
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    height:100%;
+    background:#12314A;
+    padding:32px 26px;
+    box-sizing:border-box;
+    /* Each step is clipped to nothing and grows up out of the floor on the
+       seller's click, so the flight builds a step at a time. Clipping (rather
+       than a transform) is what keeps the type undistorted while it rises. */
+    clip-path:inset(100% 0 0 0);
+    transition:clip-path 560ms cubic-bezier(.22,1,.36,1);
+  }
+  .prox-card.risen { clip-path:inset(0 0 0 0); }
+  @media (prefers-reduced-motion:reduce) {
+    .prox-card { transition:none; }
+  }
+  /* Print has no clicks to build the staircase with, so it gets it whole. */
+  @media print {
+    .prox-card { clip-path:none; }
+  }
+  .prox-card:nth-child(1) { height:calc(100% - 4 * var(--prox-step)); }
+  .prox-card:nth-child(2) { height:calc(100% - 3 * var(--prox-step)); }
+  .prox-card:nth-child(3) { height:calc(100% - 2 * var(--prox-step)); }
+  .prox-card:nth-child(4) { height:calc(100% - 1 * var(--prox-step)); }
+  .prox-num {
+    flex:0 0 auto;
+    width:64px;
+    height:64px;
+    background:#CCCB3F;
+    color:#0F2638;
+    font-weight:900;
+    font-size:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  /* deck-stage's text-wrap defaults only reach headings and <p>, so the balance
+     the other slides get for free has to be asked for here — without it step 4
+     breaks into a ragged "ao app," orphan line. */
+  .prox-text {
+    font-weight:700;
+    font-size:34px;
+    line-height:1.25;
+    color:#FFFFFF;
+    text-wrap:balance;
+  }
+  .prox-card-final { background:#CCCB3F; }
+  .prox-card-final .prox-num { background:#0F2638; color:#CCCB3F; }
+  .prox-card-final .prox-text { color:#0F2638; font-weight:800; }
+
   /* Fixed slot for the step-1/2/3 carousel: only one card visible at a time,
      the leaving one slides out left while the entering one slides in from
      the right, in the exact same slot so the arrow + persona photo never
@@ -1115,20 +1279,32 @@
              dashed frame, "META" not a period. Those two are results that
              happened; this is a goal, and it must not read as a promise. -->
         <div class="res-card">
+          <!-- The goal is the subject here, not a missing photo. The frame is
+               tall enough to swallow the badge row the other two use, so all
+               three names land on one line. -->
           <div class="res-photo res-photo-you">
-            <img src="assets/emblema-branco.png" alt="">
-            <div class="res-you-label">VOCÊ</div>
-          </div>
-          <div class="res-kg res-kg-you" id="res-you-badge">
-            <span id="res-you-kg">— KG</span>
-            <div id="res-you-shape" style="display:none;">
-              <div><b id="res-you-fat">−5 KG</b> gordura</div>
-              <div><b id="res-you-muscle">+3 KG</b> músculo</div>
+            <div class="res-you-eyebrow">SUA META</div>
+            <div class="res-you-figure" id="res-you-figure">
+              <!-- Number over unit, not beside it: on one line the frame's width
+                   caps the type at ~74px, which is what left it looking empty. -->
+              <div id="res-you-single">
+                <span id="res-you-kg">—</span>
+                <span class="res-you-unit">KG</span>
+              </div>
+              <div id="res-you-shape" style="display:none;">
+                <div><b id="res-you-fat">−5 KG</b> gordura</div>
+                <div><b id="res-you-muscle">+3 KG</b> músculo</div>
+              </div>
+            </div>
+            <div class="res-you-period">em 6 meses</div>
+            <!-- Lime cover over the goal. Peels away on tap, so the number is a
+                 reveal in the call instead of something already on screen. -->
+            <div id="res-you-cover" onclick="peelYouCard()" role="button" tabindex="0" aria-label="Revelar sua meta">
+              <div id="res-you-cover-label">VOCÊ</div>
+              <div id="res-you-cover-hint">toque para revelar</div>
             </div>
           </div>
-          <!-- Two lines on purpose: the name is user input and any length, so
-               an inline "·" would wrap raggedly against the other two cards. -->
-          <div class="res-meta res-meta-you"><b id="res-you-nome">Seu nome</b><br><span id="res-you-goal">sua meta em 6 meses</span></div>
+          <div class="res-meta res-meta-you"><b id="res-you-nome">Seu nome</b></div>
         </div>
       </div>
     </div>
@@ -1138,8 +1314,12 @@
   <section data-label="10 Custo sozinho" data-speaker-notes="Ancoragem de preço: deixe só o ≈R$3.700 na tela e deixe o número pesar. Só depois toque na caixa para virar no preço da Lifts (a partir de R$197,48/mês, o START). O contraste é o argumento — não corra." style="background:#060F1A; font-family:Poppins, sans-serif;">
     <!-- id here, not on the swap: flipping has to reach the left column too,
          so the red values can retreat as the lime box takes over. -->
-    <div id="custo-card" style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; display:flex; align-items:center; padding:110px 96px 80px 96px; box-sizing:border-box; gap:72px;">
-      <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada-lime.svg'); background-repeat:repeat-x; background-size:96px 96px;"></div>
+    <!-- Two arguments on one slide: custo and logistica. The switch swaps the
+         whole view, so the layout lives in .custo-view, not on the card. -->
+    <div id="custo-card" style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; box-sizing:border-box;">
+      <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada-lime.svg'); background-repeat:repeat-x; background-size:96px 96px; z-index:3;"></div>
+      <button id="custo-switch" type="button" onclick="toggleCustoView()"><span id="custo-switch-label">LOGÍSTICA</span> ↗</button>
+      <div id="custo-view-custo" class="custo-view">
       <div style="flex:1.25; display:flex; flex-direction:column;">
         <div style="font-weight:700; font-size:28px; letter-spacing:5px; color:#CCCB3F;">CUSTO REAL DE FAZER SOZINHO</div>
         <h2 style="margin:20px 0 0 0; font-weight:800; font-size:58px; line-height:1.12; color:#FFFFFF;">Montar seu próprio time sai <b style="color:#CCCB3F;">mais caro</b> do que você imagina</h2>
@@ -1175,6 +1355,31 @@
                  different units and must not read as a like-for-like swap. -->
             <div class="custo-strike"><s>Sozinho: ≈ R$ 7.400 em 6 meses</s></div>
             <div class="custo-note">Equipe integrada. Modelo testado.<br>Acompanhamento diário.</div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div id="custo-view-log" class="custo-view">
+        <div style="flex:1.25; display:flex; flex-direction:column;">
+          <div style="font-weight:700; font-size:28px; letter-spacing:5px; color:#CCCB3F;">LOGÍSTICA</div>
+          <h2 style="margin:20px 0 0 0; font-weight:800; font-size:58px; line-height:1.12; color:#FFFFFF;">Todos no mesmo lugar. <b style="color:#CCCB3F;">Do seu sofá.</b></h2>
+          <!-- Emoji straight on the navy, no chip: unlike slide 07's lime, dark
+               emoji are the ones that vanish here, so these are all light or
+               colourful. Last line is broken by hand — it wraps otherwise. -->
+          <div id="log-list">
+            <div><span class="m">🤝</span><span>Médico, nutri e personal na <b>mesma equipe</b></span></div>
+            <div><span class="m">📄</span><span><b>Consultas, receitas e pedido de exame</b> 100% online</span></div>
+            <div><span class="m">🛋️</span><span>Sem deslocamento e <b>sem perder o dia</b></span></div>
+            <div><span class="m">💊</span><span>O médico cuida da <b>saúde toda</b>,<br>inclusive remédios de uso diário</span></div>
+          </div>
+          <p id="log-foot">Sozinho, cada um desses é uma clínica,<br>uma agenda e um deslocamento diferente.</p>
+        </div>
+        <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+          <div id="log-box">
+            <div class="log-eyebrow">SEM SAIR DE CASA</div>
+            <div class="log-big">100%<br>ONLINE</div>
+            <div class="log-note">Do primeiro exame ao ajuste do treino.</div>
           </div>
         </div>
       </div>
@@ -1300,6 +1505,38 @@
 
   <!-- slide 13 removed -->
 
+  <!-- ============ 15 PRÓXIMOS PASSOS ============ -->
+  <section id="slide-prox" data-label="15 Próximos passos" data-speaker-notes="Fecho operacional, logo depois do plano e do preço: responde o 'e agora?' antes que ele vire dúvida. A slide abre vazia — cada clique levanta um degrau, então suba um por vez, no ritmo do lead: pagamento e contrato, onboarding, primeiras consultas, acesso ao app. O quinto não é tarefa dele: é onde ele chega. Termine nele." style="background:#060F1A; font-family:Poppins, sans-serif;">
+    <div id="prox-surface" onclick="revealNextProx()" style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; padding:110px 96px 56px 96px; box-sizing:border-box; cursor:pointer;">
+      <div style="position:absolute; top:0; left:0; right:0; height:48px; background:#0F2638; background-image:url('assets/xadrez-bandeirada-lime.svg'); background-repeat:repeat-x; background-size:96px 96px; z-index:2;"></div>
+      <!-- The floor the staircase stands on — same lime strip as the 4-passos slide. -->
+      <div style="position:absolute; left:0; right:0; bottom:0; height:56px; background:#CCCB3F; z-index:0;"></div>
+      <img src="assets/emblema-branco.png" alt="" style="position:absolute; top:76px; right:76px; width:110px; height:110px; object-fit:contain; z-index:3;">
+      <h2 style="margin:0; align-self:flex-start; background:#CCCB3F; color:#0F2638; font-weight:900; font-size:76px; line-height:1; padding:20px 40px; transform:rotate(-1.5deg); text-transform:uppercase;">Próximos passos</h2>
+      <div id="prox-grid" style="margin-top:44px; flex:1; min-height:0;">
+        <div class="prox-card">
+          <div class="prox-num">1</div>
+          <div class="prox-text">Pagamento + assinatura do contrato</div>
+        </div>
+        <div class="prox-card">
+          <div class="prox-num">2</div>
+          <div class="prox-text">Onboarding com a equipe</div>
+        </div>
+        <div class="prox-card">
+          <div class="prox-num">3</div>
+          <div class="prox-text">Marcar suas primeiras consultas</div>
+        </div>
+        <div class="prox-card">
+          <div class="prox-num">4</div>
+          <div class="prox-text">Acesso ao app, comunidade e desafios</div>
+        </div>
+        <div class="prox-card prox-card-final">
+          <div class="prox-num">5</div>
+          <div class="prox-text">Alcançar sua melhor versão com a Lifts</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
 </deck-stage>
 
@@ -1511,15 +1748,14 @@
 
     var cardNome = document.getElementById('res-you-nome');
     var cardKg = document.getElementById('res-you-kg');
-    var badge = document.getElementById('res-you-badge');
     var shapeBox = document.getElementById('res-you-shape');
-    if (!cardNome || !cardKg || !badge || !shapeBox) return;
+    if (!cardNome || !cardKg || !shapeBox) return;
 
     cardNome.textContent = pacienteState.nome || 'Seu nome';
 
     var isShape = pacienteState.goal === 'shape';
-    badge.classList.toggle('res-kg-shape', isShape);
-    cardKg.style.display = isShape ? 'none' : '';
+    var single = document.getElementById('res-you-single');
+    if (single) single.style.display = isShape ? 'none' : 'flex';
     shapeBox.style.display = isShape ? 'block' : 'none';
 
     if (isShape) {
@@ -1532,7 +1768,7 @@
       var g = pacienteState.goal ? PAC_GOALS[pacienteState.goal] : null;
       // A goal and a number are both needed for a meaningful target; short of
       // that the card holds its placeholder rather than inventing one.
-      cardKg.textContent = (g && kg > 0) ? (g.sign + kg + ' KG') : '— KG';
+      cardKg.textContent = (g && kg > 0) ? (g.sign + kg) : '—';
     }
   }
 
@@ -1544,14 +1780,39 @@
     return (v > 0) ? v : fallback;
   }
 
+  function peelYouCard() {
+    var c = document.getElementById('res-you-cover');
+    if (c) c.classList.add('peeled');
+  }
+
+  function resetYouCard() {
+    var c = document.getElementById('res-you-cover');
+    if (c) c.classList.remove('peeled');
+  }
+
   function toggleCusto() {
     var c = document.getElementById('custo-card');
     if (c) c.classList.toggle('flipped');
   }
 
+  function toggleCustoView() {
+    var c = document.getElementById('custo-card');
+    var label = document.getElementById('custo-switch-label');
+    if (!c) return;
+    var toLog = !c.classList.contains('logistica');
+    c.classList.toggle('logistica', toLog);
+    // The button always names where it goes, not where you are.
+    if (label) label.textContent = toLog ? 'CUSTO' : 'LOGÍSTICA';
+    // Leaving the cost view with the price already flipped would mean coming
+    // back to the answer instead of the anchor.
+    if (toLog) c.classList.remove('flipped');
+  }
+
   function resetCusto() {
     var c = document.getElementById('custo-card');
-    if (c) c.classList.remove('flipped');
+    var label = document.getElementById('custo-switch-label');
+    if (c) { c.classList.remove('flipped'); c.classList.remove('logistica'); }
+    if (label) label.textContent = 'LOGÍSTICA';
   }
 
   function openSupZoom(img) {
@@ -1660,6 +1921,39 @@
     // Initial paint (in case slidechange already fired before this ran).
     sync(deck.index || 0, deck.length || 1);
   })();
+</script>
+
+<script>
+  // 15 Próximos passos: the staircase builds one step per click, so the seller
+  // walks the patient up it instead of dropping all five at once. The whole
+  // slide is the trigger — there is no button to hunt for mid-call. Once the
+  // flight is complete the handler comes off: deck-stage's tap-nav skips any
+  // element carrying [onclick], so leaving it on would cost the last slide its
+  // tap-to-go-back on touch.
+  var PROX_TOTAL = 5;
+  var proxShown = 0;
+
+  function revealNextProx() {
+    if (proxShown >= PROX_TOTAL) return;
+    proxShown++;
+    var card = document.querySelector('#prox-grid .prox-card:nth-child(' + proxShown + ')');
+    if (card) card.classList.add('risen');
+    if (proxShown >= PROX_TOTAL) {
+      var done = document.getElementById('prox-surface');
+      if (done) { done.removeAttribute('onclick'); done.style.cursor = 'default'; }
+    }
+  }
+
+  function resetProx() {
+    proxShown = 0;
+    var cards = document.querySelectorAll('#prox-grid .prox-card');
+    for (var i = 0; i < cards.length; i++) cards[i].classList.remove('risen');
+    var surface = document.getElementById('prox-surface');
+    if (surface) {
+      surface.setAttribute('onclick', 'revealNextProx()');
+      surface.style.cursor = 'pointer';
+    }
+  }
 </script>
 
 <script>
@@ -1843,6 +2137,10 @@
       if (typeof closeSupZoom === 'function') closeSupZoom();
       // The anchoring only works if the slide always opens on the ≈R$3.700.
       if (typeof resetCusto === 'function') resetCusto();
+      // Same for the reveal: the goal has to be covered again next time round.
+      if (typeof resetYouCard === 'function') resetYouCard();
+      // The staircase has to be back down to bare floor on the next visit.
+      if (typeof resetProx === 'function') resetProx();
     });
   })();
 </script>
