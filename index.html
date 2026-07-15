@@ -86,6 +86,104 @@
   .plano-cta-off { opacity:0.32; pointer-events:none; }
   .cta-logo { height:48px; width:auto; flex:0 0 auto; }
 
+  /* ---- 00 Paciente ------------------------------------------------------
+     Seller-facing setup, not a presentation slide. Feeds the "VOCÊ" card on
+     slide 09. */
+  #pac-form { display:flex; flex-direction:column; gap:30px; max-width:1180px; }
+  .pac-field { display:flex; flex-direction:column; gap:12px; }
+  .pac-label { font-weight:800; font-size:24px; letter-spacing:3px; color:#0F2638; opacity:0.75; text-transform:uppercase; }
+  .pac-input {
+    font-family:Poppins, sans-serif;
+    font-weight:800;
+    font-size:40px;
+    color:#0F2638;
+    background:transparent;
+    border:none;
+    border-bottom:4px solid #0F2638;
+    padding:10px 4px;
+    outline:none;
+    width:100%;
+    box-sizing:border-box;
+  }
+  .pac-input::placeholder { color:#0F2638; opacity:0.3; font-weight:600; }
+  .pac-input:focus { border-bottom-color:#E36B5C; }
+  .pac-kg-row { display:flex; align-items:baseline; gap:14px; }
+  .pac-input-kg { width:180px; flex:0 0 auto; text-align:center; }
+  /* Chrome's number spinners look wrong against this type. */
+  .pac-input-kg::-webkit-outer-spin-button,
+  .pac-input-kg::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  .pac-kg-unit { font-weight:800; font-size:34px; color:#0F2638; opacity:0.6; }
+  #pac-goals { display:flex; gap:16px; }
+  #pac-goals .toggle-btn { font-size:32px; padding:22px 8px; }
+  .pac-label-hint { font-weight:600; letter-spacing:0; text-transform:none; opacity:0.75; }
+  #pac-shape-row { display:flex; gap:64px; flex-wrap:wrap; }
+  .pac-shape-item { display:flex; align-items:baseline; gap:10px; }
+  .pac-shape-sign { font-weight:900; font-size:40px; color:#0F2638; }
+  .pac-shape-item .pac-input-kg { width:140px; }
+
+  /* ---- 09 Você também ---------------------------------------------------
+     Fixed photo boxes with cover: the two shots have slightly different
+     aspect ratios (0.539 vs 0.548), and matching boxes keep the pair reading
+     as one comparison instead of two odd sizes. */
+  #res-cards { flex:1; display:flex; justify-content:center; gap:40px; }
+  .res-card { display:flex; flex-direction:column; align-items:center; gap:16px; }
+  /* Sized for the worst case, not the typical one: the patient's name is typed
+     in and a long one wraps to two lines, which at 596px pushed the card past
+     the content box (measured 855px vs 818px). */
+  .res-photo {
+    width:300px;
+    height:548px;
+    border-radius:20px;
+    background-size:cover;
+    background-position:center top;
+    box-shadow:0 26px 64px rgba(0, 0, 0, 0.45);
+  }
+  .res-kg {
+    background:#CCCB3F;
+    color:#0F2638;
+    font-weight:900;
+    font-size:52px;
+    line-height:1;
+    padding:12px 26px;
+    transform:rotate(-1.5deg);
+  }
+  .res-meta { font-size:28px; font-weight:400; color:#FFFFFF; opacity:0.9; }
+  .res-meta b { font-weight:800; opacity:1; }
+  .res-meta-you { text-align:center; line-height:1.35; }
+
+  /* The patient's card reads as an outline, not a photograph — dashed, empty,
+     waiting to be filled. That difference is doing real work: the other two
+     happened, this one hasn't. */
+  .res-photo-you {
+    background:rgba(204, 203, 63, 0.06);
+    border:4px dashed rgba(204, 203, 63, 0.55);
+    box-shadow:none;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:26px;
+  }
+  .res-photo-you img { width:132px; height:132px; object-fit:contain; opacity:0.9; }
+  .res-you-label { font-weight:900; font-size:46px; letter-spacing:6px; color:#CCCB3F; opacity:0.9; }
+  /* Outlined rather than filled: it is a target, not an achieved number. */
+  .res-kg-you {
+    background:transparent;
+    color:#CCCB3F;
+    border:3px solid #CCCB3F;
+    padding:9px 23px;
+  }
+  /* Shape carries two numbers, so it needs smaller type to stay inside the
+     card — at the single-line size the pair overflows the slide. */
+  .res-kg-shape {
+    font-size:28px;
+    line-height:1.3;
+    padding:12px 20px;
+    text-align:center;
+  }
+  .res-kg-shape b { font-weight:900; font-size:32px; }
+
   /* ---- 10 Custo sozinho -------------------------------------------------
      Two faces of one box. Fixed height sized to the taller (Lifts) face so the
      card doesn't resize mid-pitch; the loner fades back as the lime one lands
@@ -696,6 +794,61 @@
 <body>
 <deck-stage no-rail width="1920" height="1080" style="background:#060F1A !important; background-color:#060F1A !important;">
 
+  <!-- ============ 00 PACIENTE (setup do vendedor) ============ -->
+  <section data-label="00 Paciente" data-speaker-notes="Slide de preparo, não de apresentação: preencher antes da call com o nome e o objetivo do paciente. Isso alimenta o card 'VOCÊ' na slide 09. Os dados ficam só na memória — dar refresh limpa tudo, de propósito, para o nome de um paciente nunca aparecer na call do próximo." style="background:#060F1A; font-family:Poppins, sans-serif;">
+    <div style="position:absolute; inset:36px; background:#CCCB3F; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; justify-content:center; padding:110px 96px 80px 96px; box-sizing:border-box; gap:34px;">
+      <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada.svg'); background-repeat:repeat-x; background-size:96px 96px; z-index:2;"></div>
+      <img src="assets/emblema-azul-total.png" alt="" style="position:absolute; top:76px; right:76px; width:110px; height:110px; object-fit:contain; z-index:3;">
+
+      <div style="font-weight:700; font-size:26px; letter-spacing:5px; color:#0F2638;">ANTES DE COMEÇAR</div>
+      <h2 style="margin:0; font-weight:900; font-size:72px; line-height:1.05; color:#0F2638;">Quem é o paciente?</h2>
+      <p style="margin:0; font-weight:500; font-size:28px; color:#0F2638; opacity:0.7;">Só para o vendedor. Personaliza o card da slide de resultados.</p>
+
+      <div id="pac-form">
+        <div class="pac-field">
+          <label class="pac-label" for="pac-nome">Nome</label>
+          <input id="pac-nome" class="pac-input" type="text" autocomplete="off" placeholder="Nome do paciente" oninput="updatePaciente()">
+        </div>
+
+        <div class="pac-field">
+          <span class="pac-label">Objetivo</span>
+          <div id="pac-goals">
+            <div id="pac-goal-emagrecer" class="toggle-btn" onclick="setPacGoal('emagrecer')">Emagrecer</div>
+            <div id="pac-goal-musculo" class="toggle-btn" onclick="setPacGoal('musculo')">Ganhar músculo</div>
+            <div id="pac-goal-shape" class="toggle-btn" onclick="setPacGoal('shape')">Melhorar shape</div>
+          </div>
+        </div>
+
+        <!-- "Melhorar shape" has no number to ask for: the target is fixed and
+             the same for everyone, so the field gives way to the note. -->
+        <div class="pac-field" id="pac-kg-field">
+          <label class="pac-label" for="pac-kg"><span id="pac-kg-label">Quantos kg quer perder</span></label>
+          <div class="pac-kg-row">
+            <input id="pac-kg" class="pac-input pac-input-kg" type="number" min="1" max="99" inputmode="numeric" placeholder="0" oninput="updatePaciente()">
+            <span class="pac-kg-unit">kg</span>
+          </div>
+        </div>
+        <!-- Pre-filled with the standard target, but the seller can override it.
+             Values come from PAC_SHAPE_* so the default lives in one place. -->
+        <div class="pac-field" id="pac-shape-note" style="display:none;">
+          <span class="pac-label">Meta de shape <span class="pac-label-hint">— padrão, dá para alterar</span></span>
+          <div id="pac-shape-row">
+            <div class="pac-shape-item">
+              <span class="pac-shape-sign">−</span>
+              <input id="pac-shape-fat" class="pac-input pac-input-kg" type="number" min="1" max="99" inputmode="numeric" oninput="updatePaciente()">
+              <span class="pac-kg-unit">kg de gordura</span>
+            </div>
+            <div class="pac-shape-item">
+              <span class="pac-shape-sign">+</span>
+              <input id="pac-shape-muscle" class="pac-input pac-input-kg" type="number" min="1" max="99" inputmode="numeric" oninput="updatePaciente()">
+              <span class="pac-kg-unit">kg de músculo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ 14 CTA (moved to first) ============ -->
   <section data-label="14 CTA" data-speaker-notes="Fechamento: retomar o plano escolhido e agendar a primeira consulta agora." style="background:#060F1A; font-family:Poppins, sans-serif;">
     <div style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:44px;">
@@ -936,28 +1089,48 @@
     </div>
   </section>
 
-  <!-- ============ 09 ESTUDO ============ -->
-  <section data-label="09 Estudo adesão" data-speaker-notes="Estudo clínico: treino online guiado vs autodirigido por 10 semanas. 8 em 10 continuam com acompanhamento; só 5 em 10 sozinhos." style="background:#060F1A; font-family:Poppins, sans-serif;">
-    <div style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; padding:110px 96px 70px 96px; box-sizing:border-box;">
-      <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada.svg'); background-repeat:repeat-x; background-size:96px 96px;"></div>
-      <div style="font-weight:700; font-size:24px; letter-spacing:5px; color:#CCCB3F;">A CIÊNCIA CONFIRMA</div>
-      <h2 style="margin:18px 0 0 0; font-weight:800; font-size:56px; color:#FFFFFF;">Sozinho, quase metade abandona</h2>
-      <p style="margin:16px 0 0 0; font-size:28px; font-weight:400; color:#FFFFFF; max-width:1200px;">Estudo clínico comparou treino online <strong style="color:#CCCB3F;">guiado</strong> vs treino totalmente <strong style="color:#CCCB3F;">autodirigido</strong>, por 10 semanas.</p>
-      <div style="display:flex; gap:64px; align-items:flex-end; flex:1; margin-top:48px; max-width:1100px;">
-        <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
-          <div style="font-weight:900; font-size:76px; color:#FFFFFF;">81%</div>
-          <div style="height:220px; background:#CCCB3F; display:flex; align-items:flex-end;"></div>
-          <div style="font-weight:700; font-size:28px; color:#FFFFFF;">Com acompanhamento</div>
-          <div style="font-weight:400; font-size:24px; color:rgba(255,255,255,0.85);">8 em cada 10 continuam</div>
+  <!-- ============ 09 VOCÊ TAMBÉM ============ -->
+  <section data-label="09 Você também" data-speaker-notes="Fecho da prova social: retomar Felipe (−10kg em 2 meses) e Mellanie (−14kg em 3 meses), já mostrados nas slides 03 e 04, e virar a chave para o lead — mesmo método, mesma equipe. O ponto é que o próximo resultado pode ser o dele." style="background:#060F1A; font-family:Poppins, sans-serif;">
+    <div style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; display:flex; align-items:center; padding:110px 96px 80px 96px; box-sizing:border-box; gap:64px;">
+      <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada-lime.svg'); background-repeat:repeat-x; background-size:96px 96px; z-index:2;"></div>
+      <div style="flex:0 0 32%; display:flex; flex-direction:column; gap:28px;">
+        <div style="font-weight:700; font-size:28px; letter-spacing:5px; color:#CCCB3F;">RESULTADOS REAIS</div>
+        <h2 style="margin:0; font-weight:900; font-size:64px; line-height:1.1; color:#FFFFFF;">Você <span style="color:#CCCB3F;">também</span> pode chegar lá.</h2>
+        <p style="margin:0; font-weight:400; font-size:31px; line-height:1.45; color:#FFFFFF; opacity:0.85;">Mesmo método. Mesma equipe integrada.<br>O que muda é começar.</p>
+      </div>
+      <!-- Recap, not a repeat: slides 03/04 already tell each story with the
+           before/after toggle. Here they sit side by side as the payoff. -->
+      <div id="res-cards">
+        <div class="res-card">
+          <div class="res-photo" style="background-image:url('assets/felipe-depois.png');"></div>
+          <div class="res-kg kg-shine">−10 KG</div>
+          <div class="res-meta"><b>Felipe</b> · em 2 meses</div>
         </div>
-        <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
-          <div style="font-weight:900; font-size:76px; color:rgba(255,255,255,0.75);">52%</div>
-          <div style="height:132px; background:rgba(204,204,59,0.35);"></div>
-          <div style="font-weight:700; font-size:28px; color:#FFFFFF;">Sozinho</div>
-          <div style="font-weight:400; font-size:24px; color:rgba(255,255,255,0.75);">Só 5 em cada 10 continuam</div>
+        <div class="res-card">
+          <div class="res-photo" style="background-image:url('assets/mell-depois.png');"></div>
+          <div class="res-kg kg-shine">−14 KG</div>
+          <div class="res-meta"><b>Mellanie</b> · em 3 meses</div>
+        </div>
+        <!-- The patient's card. Deliberately unlike the other two: no photo,
+             dashed frame, "META" not a period. Those two are results that
+             happened; this is a goal, and it must not read as a promise. -->
+        <div class="res-card">
+          <div class="res-photo res-photo-you">
+            <img src="assets/emblema-branco.png" alt="">
+            <div class="res-you-label">VOCÊ</div>
+          </div>
+          <div class="res-kg res-kg-you" id="res-you-badge">
+            <span id="res-you-kg">— KG</span>
+            <div id="res-you-shape" style="display:none;">
+              <div><b id="res-you-fat">−5 KG</b> gordura</div>
+              <div><b id="res-you-muscle">+3 KG</b> músculo</div>
+            </div>
+          </div>
+          <!-- Two lines on purpose: the name is user input and any length, so
+               an inline "·" would wrap raggedly against the other two cards. -->
+          <div class="res-meta res-meta-you"><b id="res-you-nome">Seu nome</b><br><span id="res-you-goal">sua meta em 6 meses</span></div>
         </div>
       </div>
-      <p style="margin:36px 0 0 0; font-family:Inter, sans-serif; font-size:24px; color:rgba(255,255,255,0.65);">Fonte: Gavanda et al., Journal of Strength and Conditioning Research, 2025.</p>
     </div>
   </section>
 
@@ -1288,6 +1461,89 @@
     tag.textContent = showingDepois ? 'ANTES · toque para ver o depois' : 'DEPOIS · toque para ver o antes';
   }
 
+  // Slide 00 -> the "VOCÊ" card on slide 09.
+  //
+  // Held in memory only, deliberately: persisting it would carry one patient's
+  // name into the next patient's call. A refresh clears it.
+  var pacienteState = { nome: '', goal: null, kg: '' };
+
+  // The standard shape target. Seeded into the fields on load and used as the
+  // fallback if the seller clears one — the default should stand unless it is
+  // deliberately changed.
+  var PAC_SHAPE_FAT = 5;
+  var PAC_SHAPE_MUSCLE = 3;
+
+  var PAC_GOALS = {
+    emagrecer: { sign: '−', kgLabel: 'Quantos kg quer perder' },
+    musculo:   { sign: '+', kgLabel: 'Quantos kg quer ganhar' },
+    // Shape doesn't ask for one number — it has its own pair of fields.
+    shape:     { fixed: true }
+  };
+
+  function setPacGoal(goal) {
+    pacienteState.goal = (pacienteState.goal === goal) ? null : goal;
+    ['emagrecer', 'musculo', 'shape'].forEach(function (g) {
+      var el = document.getElementById('pac-goal-' + g);
+      if (el) el.classList.toggle('active', pacienteState.goal === g);
+    });
+
+    var isShape = pacienteState.goal === 'shape';
+    // Shape has a fixed target, so the field it would fill has nothing to ask.
+    var kgField = document.getElementById('pac-kg-field');
+    var shapeNote = document.getElementById('pac-shape-note');
+    if (kgField) kgField.style.display = isShape ? 'none' : 'flex';
+    if (shapeNote) shapeNote.style.display = isShape ? 'flex' : 'none';
+
+    var kgLabel = document.getElementById('pac-kg-label');
+    if (kgLabel && pacienteState.goal && !isShape) {
+      kgLabel.textContent = PAC_GOALS[pacienteState.goal].kgLabel;
+    } else if (kgLabel && !pacienteState.goal) {
+      kgLabel.textContent = 'Quantos kg quer perder ou ganhar';
+    }
+    updatePaciente();
+  }
+
+  function updatePaciente() {
+    var nomeEl = document.getElementById('pac-nome');
+    var kgEl = document.getElementById('pac-kg');
+    if (nomeEl) pacienteState.nome = nomeEl.value.trim();
+    if (kgEl) pacienteState.kg = kgEl.value.trim();
+
+    var cardNome = document.getElementById('res-you-nome');
+    var cardKg = document.getElementById('res-you-kg');
+    var badge = document.getElementById('res-you-badge');
+    var shapeBox = document.getElementById('res-you-shape');
+    if (!cardNome || !cardKg || !badge || !shapeBox) return;
+
+    cardNome.textContent = pacienteState.nome || 'Seu nome';
+
+    var isShape = pacienteState.goal === 'shape';
+    badge.classList.toggle('res-kg-shape', isShape);
+    cardKg.style.display = isShape ? 'none' : '';
+    shapeBox.style.display = isShape ? 'block' : 'none';
+
+    if (isShape) {
+      var fatEl = document.getElementById('res-you-fat');
+      var muscleEl = document.getElementById('res-you-muscle');
+      if (fatEl) fatEl.textContent = '−' + readShape('pac-shape-fat', PAC_SHAPE_FAT) + ' KG';
+      if (muscleEl) muscleEl.textContent = '+' + readShape('pac-shape-muscle', PAC_SHAPE_MUSCLE) + ' KG';
+    } else {
+      var kg = parseInt(pacienteState.kg, 10);
+      var g = pacienteState.goal ? PAC_GOALS[pacienteState.goal] : null;
+      // A goal and a number are both needed for a meaningful target; short of
+      // that the card holds its placeholder rather than inventing one.
+      cardKg.textContent = (g && kg > 0) ? (g.sign + kg + ' KG') : '— KG';
+    }
+  }
+
+  // Cleared or nonsense input falls back to the standard target rather than
+  // putting a blank or a 0 in front of the patient.
+  function readShape(id, fallback) {
+    var el = document.getElementById(id);
+    var v = el ? parseInt(el.value, 10) : NaN;
+    return (v > 0) ? v : fallback;
+  }
+
   function toggleCusto() {
     var c = document.getElementById('custo-card');
     if (c) c.classList.toggle('flipped');
@@ -1329,6 +1585,17 @@
     content.style.opacity = isOpen ? '0' : '1';
     prompt.style.opacity = isOpen ? '1' : '0';
   }
+
+  // Seed the shape fields from the constants rather than repeating the numbers
+  // in the markup, so the default has one home. Must stay in this block: it
+  // reads PAC_SHAPE_*, which earlier <script> blocks have not defined yet.
+  (function seedShapeDefaults() {
+    var fat = document.getElementById('pac-shape-fat');
+    var muscle = document.getElementById('pac-shape-muscle');
+    if (fat) fat.value = PAC_SHAPE_FAT;
+    if (muscle) muscle.value = PAC_SHAPE_MUSCLE;
+    updatePaciente();
+  })();
 </script>
 
 <!-- ── Custom deck navigation: side arrows + dot pagination ─────────── -->

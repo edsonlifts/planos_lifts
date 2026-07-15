@@ -48,7 +48,9 @@ Every slide follows this pattern:
 - Top: 48px checker band (`background-image` with SVG pattern, `background-repeat: repeat-x`, `background-size: 96px 96px`)
 - Content uses Poppins font-family throughout
 
-### Slide List (14 slides)
+### Slide List
+
+0. **00 Paciente (SETUP — não é slide de apresentação)** — Lime bg. Seller fills the patient's name and goal before the call; it feeds the "VOCÊ" card on slide 09. Emagrecer/musculo ask for a kg figure (sign flips − / +); **melhorar shape has no field** — it is a fixed target, identical for everyone: −5 kg de gordura / +3 kg de músculo (`PAC_SHAPE_*` in the budget script). State is in-memory only, deliberately: persisting it would carry one patient's name into the next patient's call. A refresh clears it.
 
 1. **01 Capa** — Lime bg. Left: emblem, tag "PASSO A PASSO PARA O RESULTADO", headline "Entrei na Lifts. E agora?", subtitle. Right: patient photo on dark backdrop.
 
@@ -66,7 +68,7 @@ Every slide follows this pattern:
 
 8. **12 Suporte 24h** — Lime bg. Left: tilted navy kicker plate, headline with the "24 HORAS" badge inline. Right: 2 chat screenshots (tilted, drifting like the slide 07 phones) — they render at ~half their native 1600px, so tapping opens one full size; below them the 💬 "app da Lifts" caption ties back to slide 07. Moved here from the end of the deck; "08 Manter é outra" (the ~80% weight-regain stat) was removed.
 
-9. **09 Estudo adesão** — Lime bg. Bar chart comparing 81% (guided) vs 52% (solo) adherence. Academic citation.
+9. **09 Você também** — Navy bg. Left: "Você **também** pode chegar lá." Right: three cards — Felipe (−10kg / 2 meses), Mellanie (−14kg / 3 meses), and the patient's, fed from slide 00. The first two are results that happened; the third is a GOAL and is built to look different on purpose (no photo, dashed frame, outlined badge, "sua meta em 6 meses" instead of a period). Do not let it drift toward matching the other two — that would read as a promised outcome. Replaced the Gavanda et al. adherence study (81% vs 52%), which is no longer anywhere in the deck.
 
 10. **10 Custo sozinho** — Navy bg. Left: headline + 5 cost items, each with a red (`#E36B5C`) value; the five MUST sum to the R$ 7.400 in the box (1.800 + 1.500 + 2.100 + 900 + 1.100). Right: ONE box that flips on click — "≈ R$ 7.400 / sozinho, em 6 meses" (navy-mid, red rail + red number) → "a partir de R$ 197,48/mês" (lime, tilted). Costs are red, the Lifts price is lime; that contrast is the argument. Both sides span 6 months (START is literally 6x R$197,48 = R$1.184,88), so the comparison is like-for-like — keep it that way if the numbers change. Resets to the R$7.400 on slide change.
 
