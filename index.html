@@ -511,6 +511,38 @@
   }
   #app-feats b { font-weight:800; }
 
+  /* ---- 06 Mercado x Lifts -----------------------------------------------
+     Opening the lime box is where the slide lands, so it takes the stage: it
+     scales up and slides to the middle of the card while the market box leaves
+     and the header steps aside. Transform only — no width/height/inset — so the
+     move runs on the compositor and the copy never re-wraps: the lines are laid
+     out at the box's real 812px and scaled up whole.
+     --stage-tx/ty are measured and set by setLiftsStaged() rather than hardcoded
+     here, so the card still lands dead centre if the grid or the box changes. */
+  #lifts-box {
+    transform:rotate(-1deg);
+    transition:transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  #lifts-box.staged {
+    transform:translate(var(--stage-tx, 0px), var(--stage-ty, 0px)) scale(1.5) rotate(-1deg);
+    z-index:5;
+  }
+  #mercado-box {
+    transition:opacity 520ms ease, transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  #mercado-box.dismissed {
+    opacity:0;
+    transform:translateX(-90px) scale(0.94);
+    pointer-events:none;
+  }
+  /* At 1.5 the staged card still leaves the first ~220px of the headline
+     sticking out past its left edge, so the header bows out rather than peek. */
+  #merc-head { transition:opacity 380ms ease; }
+  #merc-head.hushed { opacity:0; }
+  @media (prefers-reduced-motion:reduce) {
+    #lifts-box, #mercado-box, #merc-head { transition:none; }
+  }
+
   #app-phones-wrap { position:absolute; inset:0; }
   /* The asset's phones run right to its top edge (measured: opaque from 0%),
      so it can't be cropped at the top — it sits below the 48px flag strip,
@@ -1157,11 +1189,13 @@
   </section>
 
   <!-- ============ 06 COMPARAÇÃO ============ -->
-  <section data-label="06 Mercado x Lifts" data-speaker-notes="Contraste direto: o que o mercado vende vs o que a Lifts entrega. Integração é o diferencial." style="background:#060F1A; font-family:Poppins, sans-serif;">
-    <div style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; padding:110px 96px 80px 96px; box-sizing:border-box;">
+  <section data-label="06 Mercado x Lifts" data-speaker-notes="Contraste direto: o que o mercado vende vs o que a Lifts entrega. Abra primeiro o card do mercado e deixe o problema pesar; só então abra o verde — ele cresce e toma o centro, e o do mercado sai. Integração é o diferencial. Sai de cena sozinho ao trocar de slide." style="background:#060F1A; font-family:Poppins, sans-serif;">
+    <div id="merc-card" style="position:absolute; inset:36px; background:#0F2638; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; padding:110px 96px 80px 96px; box-sizing:border-box;">
       <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada-lime.svg'); background-repeat:repeat-x; background-size:96px 96px;"></div>
-      <div style="font-weight:700; font-size:24px; letter-spacing:5px; color:#CCCB3F;">POR QUE A LIFTS</div>
-      <h2 style="margin:18px 0 0 0; font-weight:800; font-size:56px; color:#FFFFFF;">Diferente de tudo que você já tentou</h2>
+      <div id="merc-head">
+        <div style="font-weight:700; font-size:24px; letter-spacing:5px; color:#CCCB3F;">POR QUE A LIFTS</div>
+        <h2 style="margin:18px 0 0 0; font-weight:800; font-size:56px; color:#FFFFFF;">Diferente de tudo que você já tentou</h2>
+      </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-top:52px; flex:1;">
         <div id="mercado-box" onclick="toggleMercadoBox()" role="button" aria-label="Mostrar o que o mercado entrega" style="position:relative; height:560px; background:#12314A; box-sizing:border-box; cursor:pointer;">
           <div id="mercado-box-prompt" style="position:absolute; inset:0; padding:44px 48px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; opacity:1; transition:opacity 350ms ease; font-weight:800; font-size:44px; color:#FFFFFF; text-align:center;">O que o mercado entrega?</div>
@@ -1176,16 +1210,18 @@
             </div>
           </div>
         </div>
-        <div id="lifts-box" onclick="toggleLiftsBox()" role="button" aria-label="Mostrar o que a Lifts entrega" style="position:relative; height:560px; background:#CCCB3F; box-sizing:border-box; transform:rotate(-1deg); cursor:pointer;">
+        <div id="lifts-box" onclick="toggleLiftsBox()" role="button" aria-label="Mostrar o que a Lifts entrega" style="position:relative; height:560px; background:#CCCB3F; box-sizing:border-box; cursor:pointer;">
           <div id="lifts-box-prompt" style="position:absolute; inset:0; padding:44px 48px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; opacity:1; transition:opacity 350ms ease; font-weight:800; font-size:44px; color:#0F2638; text-align:center;">O que a Lifts faz diferente?</div>
           <div id="lifts-box-content" style="position:absolute; inset:0; padding:44px 48px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; gap:24px; opacity:0; transition:opacity 350ms ease 150ms;">
             <div style="font-weight:800; font-size:50px; color:#0F2638;">A Lifts entrega:</div>
+            <!-- Emoji sit in the same navy chips slide 07 uses, and for the same
+                 reason: several render white and vanish against lime. -->
             <div style="display:flex; flex-direction:column; gap:18px; font-size:38px; font-weight:600; color:#0F2638;">
-              <div style="display:flex; gap:16px;"><span style="font-weight:900;">↘</span><span>Tratamento que funciona</span></div>
-              <div style="display:flex; gap:16px;"><span style="font-weight:900;">↘</span><span>Condutas baseadas em ciência</span></div>
-              <div style="display:flex; gap:16px;"><span style="font-weight:900;">↘</span><span>Consultas de verdade</span></div>
-              <div style="display:flex; gap:16px;"><span style="font-weight:900;">↘</span><span>Treino com progressão de carga</span></div>
-              <div style="display:flex; gap:16px;"><span style="font-weight:900;">↘</span><span>Médico + Nutri + Personal integrados</span></div>
+              <div style="display:flex; gap:16px; align-items:center;"><span class="app-ico">🎯</span><span>Tratamento que funciona</span></div>
+              <div style="display:flex; gap:16px; align-items:center;"><span class="app-ico">🔬</span><span>Condutas baseadas em ciência</span></div>
+              <div style="display:flex; gap:16px; align-items:center;"><span class="app-ico">🩺</span><span>Consultas de verdade</span></div>
+              <div style="display:flex; gap:16px; align-items:center;"><span class="app-ico">🏋️</span><span>Treino com progressão de carga</span></div>
+              <div style="display:flex; gap:16px; align-items:center;"><span class="app-ico">🤝</span><span>Médico + Nutri + Personal integrados</span></div>
             </div>
           </div>
         </div>
@@ -1829,6 +1865,36 @@
     if (z) z.classList.remove('open');
   }
 
+  // 06: the lime box takes the stage when it opens — it is the answer the slide
+  // is built to land, so it stops sharing the frame with the problem.
+  //
+  // The centring offsets are measured, never hardcoded: getBoundingClientRect
+  // reports screen pixels, which deck-stage has already scaled to fit the
+  // window, so dividing by that live scale puts them back into the deck's own
+  // 1920x1080 space — where the transform is applied. Rotation about the centre
+  // does not move the centre, so the -1deg tilt is safe to measure through.
+  function setLiftsStaged(on) {
+    var box = document.getElementById('lifts-box');
+    var card = document.getElementById('merc-card');
+    var merc = document.getElementById('mercado-box');
+    var head = document.getElementById('merc-head');
+    if (!box || !card) return;
+    if (on) {
+      var b = box.getBoundingClientRect();
+      var c = card.getBoundingClientRect();
+      var scale = card.offsetWidth ? c.width / card.offsetWidth : 1;
+      if (scale > 0) {
+        var dx = ((c.left + c.width / 2) - (b.left + b.width / 2)) / scale;
+        var dy = ((c.top + c.height / 2) - (b.top + b.height / 2)) / scale;
+        box.style.setProperty('--stage-tx', dx + 'px');
+        box.style.setProperty('--stage-ty', dy + 'px');
+      }
+    }
+    box.classList.toggle('staged', on);
+    if (merc) merc.classList.toggle('dismissed', on);
+    if (head) head.classList.toggle('hushed', on);
+  }
+
   function toggleLiftsBox() {
     var prompt = document.getElementById('lifts-box-prompt');
     var content = document.getElementById('lifts-box-content');
@@ -1836,6 +1902,20 @@
     var isOpen = content.style.opacity === '1';
     content.style.opacity = isOpen ? '0' : '1';
     prompt.style.opacity = isOpen ? '1' : '0';
+    // Measure before the class lands, while the box is still in its slot.
+    setLiftsStaged(!isOpen);
+  }
+
+  // Slide 06 had no reset, which was survivable while both boxes just swapped
+  // copy in place. It is not now: coming back to find the lime card still blown
+  // up over the headline reads as a bug.
+  function resetMercado() {
+    [['lifts-box-content', '0'], ['lifts-box-prompt', '1'],
+     ['mercado-box-content', '0'], ['mercado-box-prompt', '1']].forEach(function (pair) {
+      var el = document.getElementById(pair[0]);
+      if (el) el.style.opacity = pair[1];
+    });
+    setLiftsStaged(false);
   }
 
   function toggleMercadoBox() {
@@ -2141,6 +2221,8 @@
       if (typeof resetYouCard === 'function') resetYouCard();
       // The staircase has to be back down to bare floor on the next visit.
       if (typeof resetProx === 'function') resetProx();
+      // Same for the lime card: it must never be found still centre-stage.
+      if (typeof resetMercado === 'function') resetMercado();
     });
   })();
 </script>
