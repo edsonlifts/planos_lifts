@@ -89,7 +89,7 @@
   /* ---- 00 Paciente ------------------------------------------------------
      Seller-facing setup, not a presentation slide. Feeds the "VOCÊ" card on
      slide 09. */
-  #pac-form { display:flex; flex-direction:column; gap:30px; max-width:1180px; }
+  #pac-form { display:flex; flex-direction:column; gap:18px; max-width:1180px; }
   .pac-field { display:flex; flex-direction:column; gap:12px; }
   .pac-label { font-weight:800; font-size:24px; letter-spacing:3px; color:#0F2638; opacity:0.75; text-transform:uppercase; }
   .pac-input {
@@ -115,6 +115,8 @@
   .pac-kg-unit { font-weight:800; font-size:34px; color:#0F2638; opacity:0.6; }
   #pac-goals { display:flex; gap:16px; }
   #pac-goals .toggle-btn { font-size:32px; padding:22px 8px; }
+  #pac-origem { display:flex; gap:16px; }
+  #pac-origem .toggle-btn { font-size:26px; padding:20px 8px; }
   .pac-label-hint { font-weight:600; letter-spacing:0; text-transform:none; opacity:0.75; }
   #pac-shape-row { display:flex; gap:64px; flex-wrap:wrap; }
   .pac-shape-item { display:flex; align-items:baseline; gap:10px; }
@@ -669,6 +671,26 @@
   .plan-feats span:first-child { color:#CCCB3F; font-weight:900; }
   .plan-bonus { font-size:28px; font-weight:700; color:#CCCB3F; margin-top:4px; }
   .plan-badge { background:#CCCB3F; color:#0F2638; font-weight:800; font-size:24px; padding:8px 20px; }
+  /* Discount ticket: shown on every plan card when the lead came via an
+     influencer or a gym partnership. Off by default (sem comissão). Populated
+     from slide 00. Lime tag on the navy card, signature counter-tilt. */
+  .plan-ticket {
+    display:none;
+    align-self:flex-start;
+    align-items:center;
+    gap:8px;
+    background:#CCCB3F;
+    color:#0F2638;
+    font-weight:800;
+    font-size:22px;
+    letter-spacing:1px;
+    line-height:1.15;
+    padding:9px 20px;
+    max-width:100%;
+    transform:rotate(-1.5deg);
+    text-transform:uppercase;
+    box-shadow:0 6px 18px rgba(6, 15, 26, 0.35);
+  }
 
   /* Elite is the flagship, so it earns a richer treatment than the other three:
      depth instead of flat navy, a lime keyline frame, more elevation, and the
@@ -992,13 +1014,13 @@
 
   <!-- ============ 00 PACIENTE (setup do vendedor) ============ -->
   <section data-label="00 Paciente" data-speaker-notes="Slide de preparo, não de apresentação: preencher antes da call com o nome e o objetivo do paciente. Isso alimenta o card 'VOCÊ' na slide 09. Os dados ficam só na memória — dar refresh limpa tudo, de propósito, para o nome de um paciente nunca aparecer na call do próximo." style="background:#060F1A; font-family:Poppins, sans-serif;">
-    <div style="position:absolute; inset:36px; background:#CCCB3F; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; justify-content:center; padding:110px 96px 80px 96px; box-sizing:border-box; gap:34px;">
+    <div style="position:absolute; inset:36px; background:#CCCB3F; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; justify-content:center; padding:72px 96px 60px 96px; box-sizing:border-box; gap:16px;">
       <div style="position:absolute; top:0; left:0; right:0; height:48px; background-image:url('assets/xadrez-bandeirada.svg'); background-repeat:repeat-x; background-size:96px 96px; z-index:2;"></div>
       <img src="assets/emblema-azul-total.png" alt="" style="position:absolute; top:76px; right:76px; width:110px; height:110px; object-fit:contain; z-index:3;">
 
-      <div style="font-weight:700; font-size:26px; letter-spacing:5px; color:#0F2638;">ANTES DE COMEÇAR</div>
-      <h2 style="margin:0; font-weight:900; font-size:72px; line-height:1.05; color:#0F2638;">Quem é o paciente?</h2>
-      <p style="margin:0; font-weight:500; font-size:28px; color:#0F2638; opacity:0.7;">Só para o vendedor. Personaliza o card da slide de resultados.</p>
+      <div style="font-weight:700; font-size:22px; letter-spacing:5px; color:#0F2638;">ANTES DE COMEÇAR</div>
+      <h2 style="margin:0; font-weight:900; font-size:52px; line-height:1.02; color:#0F2638;">Quem é o paciente?</h2>
+      <p style="margin:0; font-weight:500; font-size:22px; color:#0F2638; opacity:0.7;">Só para o vendedor. Personaliza o card da slide de resultados e o desconto no plano.</p>
 
       <div id="pac-form">
         <div class="pac-field">
@@ -1040,6 +1062,21 @@
               <span class="pac-kg-unit">kg de músculo</span>
             </div>
           </div>
+        </div>
+
+        <!-- Lead source / commission. Drives the discount ticket on the plan
+             cards (slide 11). Memory only, cleared on refresh. -->
+        <div class="pac-field">
+          <span class="pac-label">De onde o lead veio?</span>
+          <div id="pac-origem">
+            <div id="orig-btn-semcomissao" class="toggle-btn active" onclick="setOrigem('semcomissao')">Sem comissão</div>
+            <div id="orig-btn-influenciador" class="toggle-btn" onclick="setOrigem('influenciador')">Influenciador</div>
+            <div id="orig-btn-academia" class="toggle-btn" onclick="setOrigem('academia')">Parceria academia</div>
+          </div>
+        </div>
+        <div class="pac-field" id="orig-name-field" style="display:none;">
+          <label class="pac-label" id="orig-name-label" for="orig-nome">Nome do influenciador</label>
+          <input id="orig-nome" class="pac-input" type="text" autocomplete="off" placeholder="Nome do influenciador" oninput="updateOrigem()">
         </div>
       </div>
     </div>
@@ -1445,6 +1482,7 @@
         <div id="budget-noplan" class="plano-cta plano-cta-off">VER O PLANO IDEAL <img class="cta-logo" src="assets/emblema-branco.png" alt=""></div>
         <div id="budget-revealbtn" class="plano-cta" style="display:none;" onclick="revealPlan()">VER O PLANO IDEAL <img class="cta-logo" src="assets/emblema-branco.png" alt=""></div>
         <div id="budget-medical" class="plan-box" style="display:none;">
+          <div class="plan-ticket"></div>
           <div class="plan-eyebrow">PLANO TRIMESTRAL</div>
           <div class="plan-title">Lifts MEDICAL</div>
           <div class="plan-pricerow">
@@ -1462,6 +1500,7 @@
           </div>
         </div>
         <div id="budget-start" class="plan-box" style="display:none;">
+          <div class="plan-ticket"></div>
           <div class="plan-eyebrow">PLANO · 6 MESES</div>
           <div class="plan-title">Lifts START</div>
           <div class="plan-pricerow">
@@ -1479,6 +1518,7 @@
           <div class="plan-bonus">★ Bônus: +1 Nutri · +1 Personal · App</div>
         </div>
         <div id="budget-nutrition" class="plan-box" style="display:none;">
+          <div class="plan-ticket"></div>
           <div class="plan-eyebrow">PLANO · 6 MESES</div>
           <div class="plan-title">Lifts NUTRITION</div>
           <div class="plan-pricerow">
@@ -1496,6 +1536,7 @@
           <div class="plan-bonus">★ Bônus: +1 Nutri · +1 Médico · App</div>
         </div>
         <div id="budget-elite" class="plan-box" style="display:none;">
+          <div class="plan-ticket"></div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div class="plan-eyebrow">PLANO · 6 MESES</div>
             <div class="plan-badge kg-shine">⚠ VAGAS LIMITADAS</div>
@@ -1814,6 +1855,57 @@
     var el = document.getElementById(id);
     var v = el ? parseInt(el.value, 10) : NaN;
     return (v > 0) ? v : fallback;
+  }
+
+  // Lead source (slide 00) -> discount ticket on every plan card (slide 11).
+  // Memory only, like the patient data: a refresh clears it.
+  var origemState = { tipo: 'semcomissao', nome: '' };
+
+  function setOrigem(tipo) {
+    origemState.tipo = tipo;
+    ['semcomissao', 'influenciador', 'academia'].forEach(function (t) {
+      var el = document.getElementById('orig-btn-' + t);
+      if (el) el.classList.toggle('active', tipo === t);
+    });
+
+    // Only an influencer or a gym partnership asks for a name.
+    var needsName = (tipo === 'influenciador' || tipo === 'academia');
+    var field = document.getElementById('orig-name-field');
+    var label = document.getElementById('orig-name-label');
+    var input = document.getElementById('orig-nome');
+    if (field) field.style.display = needsName ? 'flex' : 'none';
+    if (needsName) {
+      var txt = (tipo === 'influenciador') ? 'Nome do influenciador' : 'Nome da academia';
+      if (label) label.textContent = txt;
+      if (input) input.placeholder = txt;
+    } else if (input) {
+      input.value = '';
+      origemState.nome = '';
+    }
+    updateOrigem();
+  }
+
+  function updateOrigem() {
+    var input = document.getElementById('orig-nome');
+    if (input) origemState.nome = input.value.trim();
+    syncTickets();
+  }
+
+  // The ticket text stays lowercase here; CSS uppercases it, so a name keeps its
+  // own casing internally while reading as one uppercase tag.
+  function syncTickets() {
+    var show = (origemState.tipo === 'influenciador' || origemState.tipo === 'academia');
+    var text = '';
+    if (origemState.tipo === 'influenciador') {
+      text = '🎟 Desconto especial' + (origemState.nome ? ' ' + origemState.nome : '');
+    } else if (origemState.tipo === 'academia') {
+      text = '🎟 Desconto especial aluno' + (origemState.nome ? ' ' + origemState.nome : '');
+    }
+    var tickets = document.querySelectorAll('.plan-ticket');
+    for (var i = 0; i < tickets.length; i++) {
+      tickets[i].style.display = show ? 'inline-flex' : 'none';
+      tickets[i].textContent = text;
+    }
   }
 
   function peelYouCard() {
